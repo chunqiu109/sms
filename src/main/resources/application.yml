@@ -1,0 +1,48 @@
+# 端口、数据源、thymeleaf、mybatis、表单转换
+server:
+  port: 80
+
+
+spring:
+  application:
+    name: sms
+  datasource:
+    username: root
+    password: 1234
+    url: jdbc:mysql://82.157.156.63:3306/sms?serverTimezone=GMT%2B8
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+    throw-exception-if-no-handler-found: true
+  jackson:
+    date-format: yyyy-MM-dd
+    time-zone: GMT+8
+
+logging:
+  level:
+    com.danmi.sms: debug
+  #file:
+    #name: logs/sms.log
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath*:mybatis/mapper/*.xml
+  type-aliases-package: cn.danmi.sms.*.entity
+
+
+#
+#nacos:
+#  config:
+#    server-addr: 82.157.156.63:8848
+#    namespace: 1d4364dc-2cb1-4d3b-af0c-8c09ab437555
+#  discovery:
+#    server-addr: 82.157.156.63:8848
+
+
+authent:
+    file:
+      path: /upload
