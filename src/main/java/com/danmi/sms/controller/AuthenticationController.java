@@ -54,7 +54,8 @@ public class AuthenticationController {
     @ApiOperation(value = "企业认证", notes = "企业认证")
     public Result<Object> addRole(Authentication authentication, HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException {
 //         判断必须参数
-        if (!StringUtils.hasLength(authentication.getCompany()) || !StringUtils.hasLength(authentication.getCertification()) || !StringUtils.hasLength(authentication.getLegalPerson())) {
+        if (!StringUtils.hasLength(authentication.getCompany()) || !StringUtils.hasLength(authentication.getCertification())
+                || !StringUtils.hasLength(authentication.getLegalPerson()) || file.isEmpty()) {
             return Result.fail("必传参数不能为空！");
         }
 
