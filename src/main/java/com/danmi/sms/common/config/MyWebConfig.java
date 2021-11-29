@@ -60,7 +60,7 @@ public class MyWebConfig implements WebMvcConfigurer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        log.info("path >>>>>>>>>>>>>>>>>>>>" + filePath);
+        log.info(" uploadPath >>>>>>>>>>>>>>>>>>>>" + filePath);
         registry.addResourceHandler("/resource/**").addResourceLocations("file:" + filePath + "/");
     }
 
