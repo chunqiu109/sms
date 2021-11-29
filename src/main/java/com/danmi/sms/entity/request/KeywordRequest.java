@@ -7,10 +7,6 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class SignRequest  extends Request{
-
-    private String content;
-
-    private String approveStatus;
-
+public class KeywordRequest extends Request{
+    private String keyword;
 }

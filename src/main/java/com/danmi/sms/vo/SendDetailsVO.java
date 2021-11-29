@@ -1,4 +1,4 @@
-package com.danmi.sms.entity.request;
+package com.danmi.sms.vo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,10 +7,5 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class SignRequest  extends Request{
-
-    private String content;
-
-    private String approveStatus;
-
+public class SendDetailsVO {
 }

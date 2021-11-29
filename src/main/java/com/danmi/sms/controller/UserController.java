@@ -1,7 +1,7 @@
 package com.danmi.sms.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.danmi.sms.UserVo;
+import com.danmi.sms.vo.UserVo;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Menu;

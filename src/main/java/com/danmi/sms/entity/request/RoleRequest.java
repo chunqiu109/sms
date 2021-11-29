@@ -10,14 +10,10 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class RoleRequest {
+public class RoleRequest  extends Request{
 
     private String name;
 
     private String code;
-
-    private Integer limit;
-
-    private Integer page;
 
 }

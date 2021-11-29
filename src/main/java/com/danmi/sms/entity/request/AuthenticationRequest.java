@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class AuthenticationRequest {
+public class AuthenticationRequest extends Request{
 
     private String company;
 
@@ -23,7 +23,4 @@ public class AuthenticationRequest {
 
     private String approveStatus;
 
-    private Integer limit;
-
-    private Integer page;
 }

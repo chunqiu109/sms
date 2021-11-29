@@ -7,14 +7,10 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class UserRequest {
+public class UserRequest  extends Request{
 
     private String phone;
 
 //    private String code;
-
-    private Integer limit;
-
-    private Integer page;
 
 }

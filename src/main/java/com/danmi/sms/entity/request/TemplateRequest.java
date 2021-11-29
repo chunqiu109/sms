@@ -7,12 +7,9 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class TemplateRequest {
+public class TemplateRequest  extends Request{
     private String content;
 
     private String approveStatus;
 
-    private Integer limit;
-
-    private Integer page;
 }

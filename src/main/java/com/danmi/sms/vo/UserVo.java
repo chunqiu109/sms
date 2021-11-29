@@ -1,4 +1,4 @@
-package com.danmi.sms;
+package com.danmi.sms.vo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
