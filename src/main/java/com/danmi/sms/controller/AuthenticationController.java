@@ -9,6 +9,7 @@ import com.danmi.sms.entity.request.AuthenticationRequest;
 import com.danmi.sms.enums.AuthenticationApproveStatusEnum;
 import com.danmi.sms.service.IAuthenticationService;
 import com.danmi.sms.utils.FilePathUtils;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +39,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/authentication")
+@Api("认证管理")
 public class AuthenticationController {
 
 
@@ -49,7 +51,7 @@ public class AuthenticationController {
 
     @PostMapping("certify")
     @ResponseBody
-    @ApiOperation(value = "添加签名", notes = "添加签名")
+    @ApiOperation(value = "企业认证", notes = "企业认证")
     public Result<Object> addRole(Authentication authentication, HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException {
 //         判断必须参数
         if (!StringUtils.hasLength(authentication.getCompany()) || !StringUtils.hasLength(authentication.getCertification()) || !StringUtils.hasLength(authentication.getLegalPerson())) {
@@ -93,7 +95,7 @@ public class AuthenticationController {
     // @ todo 权限!!!!!
     @GetMapping("list")
     @ResponseBody
-    @ApiOperation(value = "签名列表", notes = "签名列表")
+    @ApiOperation(value = "认证列表", notes = "认证列表")
     public Result<Object> list(AuthenticationRequest authentication) {
 
         PageDTO<Authentication> rolePageDTO = authenticationService.listAuthenticationPage(authentication);
@@ -103,7 +105,7 @@ public class AuthenticationController {
     // @ todo 权限
     @GetMapping("/{id}")
     @ResponseBody
-    @ApiOperation(value = "根据id获取签名", notes = "根据id获取签名")
+    @ApiOperation(value = "根据id获取认证", notes = "根据id获取认证")
     public Result<Object> getById(@PathVariable(value = "id") Integer id) {
         Authentication authentication = authenticationService.getById(id);
         return Result.success(authentication);
@@ -112,7 +114,7 @@ public class AuthenticationController {
     // @ todo 权限
     @DeleteMapping("/{ids}")
     @ResponseBody
-    @ApiOperation(value = "根据id批量删除签名", notes = "根据id批量删除签名")
+    @ApiOperation(value = "根据id批量删除认证", notes = "根据id批量删除认证")
     @ApiImplicitParams({@ApiImplicitParam(name = "ids", value = "删除的签名id，多个id逗号分割", dataTypeClass = String.class)})
     public Result<Object> deleteRoleByIds(@PathVariable("ids") String ids) {
         List<String> cids = Arrays.asList(ids.split(","));
@@ -123,7 +125,7 @@ public class AuthenticationController {
     // @ todo 权限
     @PutMapping("")
     @ResponseBody
-    @ApiOperation(value = "根据id更新签名", notes = "根据id更新签名")
+    @ApiOperation(value = "根据id更新认证", notes = "根据id更新认证")
     public Result<Object> updateRoleById(@RequestBody Authentication authentication) {
         if (ObjectUtils.isEmpty(authentication.getId())) {
             return Result.fail("必传参数不能为空！");

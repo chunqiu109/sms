@@ -10,6 +10,7 @@ import com.danmi.sms.entity.request.TemplateRequest;
 import com.danmi.sms.enums.TemplateApproveStatusEnum;
 import com.danmi.sms.enums.TemplateStatusEnum;
 import com.danmi.sms.service.ITemplateService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -23,15 +24,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * <p>
- *  前端控制器
- * </p>
+ * 模板管理
  *
  * @author chunqiu
  * @since 2021-11-28
  */
 @RestController
 @RequestMapping("/template")
+@Api("模板管理")
 public class TemplateController {
     @Autowired
     private ITemplateService templateService;

@@ -11,6 +11,7 @@ import com.danmi.sms.entity.request.SignRequest;
 import com.danmi.sms.enums.SignApproveStatusEnum;
 import com.danmi.sms.enums.SignStatusEnum;
 import com.danmi.sms.service.ISignService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +33,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sign")
+@Api("签名管理")
 public class SignController {
 
     @Autowired
