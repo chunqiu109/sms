@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * <p>
- *  前端控制器
- * </p>
+ *
+ *  认证管理
+ *
  *
  * @author chunqiu
  * @since 2021-11-28
