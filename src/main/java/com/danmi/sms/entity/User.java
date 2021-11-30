@@ -1,11 +1,13 @@
 package com.danmi.sms.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Date;
 
+import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -30,6 +32,9 @@ public class User implements Serializable {
 
     private String code;
 
+    @TableField(exist = false)
+    private Integer integerCode;
+
     private String username;
 
     private String password;
@@ -43,6 +48,8 @@ public class User implements Serializable {
     private Integer roleId;
 
     private String phone;
+
+    private Integer grade;
 
 
 }

@@ -1,6 +1,7 @@
 package com.danmi.sms.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.danmi.sms.utils.UserCodeUtil;
 import com.danmi.sms.vo.UserVo;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
@@ -13,8 +14,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +41,8 @@ public class UserController {
     private IUserService userService;
     @Autowired
     private IRoleService roleService;
+    @Value("${role.digit:5}")
+    private static Integer roleDigit;
 
 
 //    @todo 权限问题
@@ -126,24 +131,21 @@ public class UserController {
 
         user.setPassword(encodePassword);
 
-        userService.register(user);
-        // 保存
-        boolean flag = userService.save(new User().setPassword(user.getPassword())
-                .setPhone(user.getPhone())
-                .setRoleId(2)
-                .setCt(LocalDateTime.now()));
+        return userService.register(user);
 
-        if (flag) {
-            return Result.success("注册成功！");
-        } else {
-            return Result.fail("注册失败！");
-        }
     }
 
     @PostMapping("")
     @ResponseBody
     @ApiOperation(value = "用户添加", notes = "用户添加")
-    public Result<Object> addUser(@RequestBody User user) {
+    public Result<Object> addUser(@RequestBody User user, HttpServletRequest request) {
+
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
         // 判断必须参数
         if (!org.springframework.util.StringUtils.hasLength(user.getPhone()) || !org.springframework.util.StringUtils.hasLength(user.getPassword())) {
             return Result.fail("必传参数不能为空！");
@@ -151,16 +153,35 @@ public class UserController {
 
         User one = userService.getOne(Wrappers.<User>lambdaQuery().eq(User::getPhone, user.getPhone()));
         if (one != null) {
-            return Result.fail("该手机号已被注册！");
+            return Result.fail("该手机号已被添加，请核对！");
         }
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodePassword = passwordEncoder.encode(user.getPassword());
 
-        user.setPassword(encodePassword).setCt(LocalDateTime.now()).setRoleId(2);
+        // 生成userCode
+        String parentCode = loginUser.getCode();
+        // userCode 查询自己下边有没有新建的用户，有的话就在之上加1，没有拼接
+        List<User> list = userService.list();
+        list.stream().filter(i -> i.getCode().substring(0, parentCode.length()+1).equals(parentCode)).map(i -> i.setIntegerCode(Integer.valueOf(i.getCode()))).collect(Collectors.toList());
+
+        if (ObjectUtils.isNotEmpty(list) && list.size()!=0){
+            list.sort((a , b) -> b.getIntegerCode()-a.getIntegerCode());
+            Integer integerCode = list.get(0).getIntegerCode();
+            user.setCode(String.valueOf(integerCode+1));
+        } else {
+            user.setCode(parentCode+ UserCodeUtil.generateRegisterCode());
+        }
 
 
-        boolean flag = userService.save(user);
+
+        user.setPassword(encodePassword)
+                .setCt(LocalDateTime.now())
+                .setGrade(user.getCode().length()/roleDigit)
+                .setRoleId(2);
+
+
+        boolean flag = userService.saveUser(user);
         if (flag) {
             return Result.success("添加成功！");
         } else {
@@ -197,6 +218,21 @@ public class UserController {
     @ResponseBody
     @ApiOperation(value = "根据id获取用户", notes = "根据id获取用户")
     public Result<Object> getById(@PathVariable(value = "id") Integer id) {
+        User user = userService.getById(id);
+        return Result.success(user);
+    }
+
+    /**
+     * 给用户添加角色
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ResponseBody
+    @ApiOperation(value = "根据id获取用户", notes = "根据id获取用户")
+    public Result<Object> userAddRole(@PathVariable(value = "id") Integer id) {
+//        @todo
+
         User user = userService.getById(id);
         return Result.success(user);
     }

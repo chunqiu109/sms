@@ -51,3 +51,8 @@ authent:
 phone:
   provider:
     url: https://chongzhi.jd.com/json/order/search_searchPhone.action?mobile=
+
+
+
+role:
+  digit: 5

@@ -1,5 +1,6 @@
 package com.danmi.sms.service;
 
+import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Menu;
 import  com.danmi.sms.entity.User;
@@ -22,5 +23,7 @@ public interface IUserService extends IService<User> {
 
     PageDTO<User> listUserPage(Integer roleId, UserRequest param);
 
-    void register(UserVo user);
+    Result register(UserVo user);
+
+    boolean saveUser(User user);
 }
