@@ -21,28 +21,4 @@ import java.util.List;
 @Service
 public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendDetails> implements ISendDetailsService {
 
-    @Override
-    public List<SendDetailsVO> general(SendDetailRequest request) {
-        return null;
-    }
-
-    @Override
-    public List<SendDetailsVO> statusAnalysis(SendDetailRequest request) {
-        return null;
-    }
-
-    @Override
-    public List<SendDetailsVO> sendDetails(SendDetailRequest request) {
-        return null;
-    }
-
-    @Override
-    public List<SendDetailsVO> replyRecord(SendDetailRequest request) {
-        return null;
-    }
-
-    @Override
-    public List<SendDetailsVO> dataStatistics(SendDetailRequest request) {
-        return null;
-    }
 }

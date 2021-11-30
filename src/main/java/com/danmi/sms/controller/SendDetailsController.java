@@ -25,58 +25,5 @@ import java.util.List;
 @RequestMapping("/send-details")
 public class SendDetailsController {
 
-    @Autowired
-    private ISendDetailsService sendDetailsService;
-
-    /**
-     * 发送概况
-     * @return
-     */
-    @GetMapping("general")
-    public Result<Object> general(SendDetailRequest request) {
-        List<SendDetailsVO> sendDetailsVOS = sendDetailsService.general(request);
-        return Result.success(sendDetailsVOS);
-    }
-
-    /**
-     * 状态分析
-     * @return
-     */
-    @GetMapping("status-analysis")
-    public Result<Object> statusAnalysis(SendDetailRequest request) {
-        List<SendDetailsVO> sendDetailsVOS = sendDetailsService.statusAnalysis(request);
-        return Result.success(sendDetailsVOS);
-    }
-
-    /**
-     * 发送详情
-     * @return
-     */
-    @GetMapping("send-details")
-    public Result<Object> sendDetails(SendDetailRequest request) {
-        List<SendDetailsVO> sendDetailsVOS = sendDetailsService.sendDetails(request);
-        return Result.success(sendDetailsVOS);
-    }
-
-    /**
-     * 回复记录
-     * @return
-     */
-    @GetMapping("reply-record")
-    public Result<Object> replyRecord(SendDetailRequest request) {
-        List<SendDetailsVO> sendDetailsVOS = sendDetailsService.replyRecord(request);
-        return Result.success(sendDetailsVOS);
-    }
-
-
-    /**
-     * 数据统计
-     * @return
-     */
-    @GetMapping("data-statistics")
-    public Result<Object> dataStatistics(SendDetailRequest request) {
-        List<SendDetailsVO> sendDetailsVOS = sendDetailsService.dataStatistics(request);
-        return Result.success(sendDetailsVOS);
-    }
 
 }

@@ -126,6 +126,7 @@ public class UserController {
 
         user.setPassword(encodePassword);
 
+        userService.register(user);
         // 保存
         boolean flag = userService.save(new User().setPassword(user.getPassword())
                 .setPhone(user.getPhone())

@@ -2,7 +2,7 @@ package com.danmi.sms.entity.request;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 public class Request {
@@ -10,7 +10,7 @@ public class Request {
 
     private Integer page;
 
-    private LocalDateTime startTime;
+    private LocalDate startTime;
 
-    private LocalDateTime endTime;
+    private LocalDate endTime;
 }

@@ -12,10 +12,12 @@ import  com.danmi.sms.mapper.UserMapper;
 import com.danmi.sms.service.IRoleService;
 import  com.danmi.sms.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.danmi.sms.vo.UserVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -64,5 +66,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         IPage<User> data = userMapper.selectPage(page, wrapper);
         return new PageDTO<>(data);
+    }
+
+    @Override
+    public void register(UserVo user) {
+
+        // 生成用户编码
+//        @todo
+        String code="";
+        // 先保存角色信息
+        // 保存
+        boolean flag = save(new User().setPassword(user.getPassword())
+                .setPhone(user.getPhone())
+                .setCode(code)
+                .setRoleId(2)
+                .setCt(LocalDateTime.now()));
     }
 }

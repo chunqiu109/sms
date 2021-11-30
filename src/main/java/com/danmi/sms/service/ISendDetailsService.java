@@ -17,13 +17,4 @@ import java.util.List;
  */
 public interface ISendDetailsService extends IService<SendDetails> {
 
-    List<SendDetailsVO> general(SendDetailRequest request);
-
-    List<SendDetailsVO> statusAnalysis(SendDetailRequest request);
-
-    List<SendDetailsVO> sendDetails(SendDetailRequest request);
-
-    List<SendDetailsVO> replyRecord(SendDetailRequest request);
-
-    List<SendDetailsVO> dataStatistics(SendDetailRequest request);
 }

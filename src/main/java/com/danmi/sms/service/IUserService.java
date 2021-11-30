@@ -5,6 +5,7 @@ import com.danmi.sms.entity.Menu;
 import  com.danmi.sms.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danmi.sms.entity.request.UserRequest;
+import com.danmi.sms.vo.UserVo;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface IUserService extends IService<User> {
     User login(User user);
 
     PageDTO<User> listUserPage(Integer roleId, UserRequest param);
+
+    void register(UserVo user);
 }
