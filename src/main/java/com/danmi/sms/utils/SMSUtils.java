@@ -27,22 +27,22 @@ public class SMSUtils {
     private static String smsApiUrl;
 
     @Value("${account.id}")
-    public static void setAccountId(String accountId) {
+    public void setAccountId(String accountId) {
         SMSUtils.accountId = accountId;
     }
 
     @Value("${account.sid}")
-    public static void setAccountSid(String accountSid) {
+    public void setAccountSid(String accountSid) {
         SMSUtils.accountSid = accountSid;
     }
-    @Value("${auth.token}")
 
-    public static void setAuthToken(String authToken) {
+    @Value("${auth.token}")
+    public void setAuthToken(String authToken) {
         SMSUtils.authToken = authToken;
     }
 
     @Value("${sms.api.url}")
-    public static void setSmsApiUrl(String smsApiUrl) {
+    public void setSmsApiUrl(String smsApiUrl) {
         SMSUtils.smsApiUrl = smsApiUrl;
     }
 
