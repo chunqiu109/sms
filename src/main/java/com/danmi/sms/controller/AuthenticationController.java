@@ -85,7 +85,7 @@ public class AuthenticationController {
 
             boolean flag = authenticationService.save(authentication);
             if (flag) {
-                return Result.success("添加成功！");
+                return Result.success(authentication);
             } else {
                 return Result.fail("添加失败！");
             }

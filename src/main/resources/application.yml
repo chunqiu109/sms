@@ -56,3 +56,16 @@ phone:
 
 role:
   digit: 5
+
+
+account:
+  id: 761563
+  sid: 9d7f0e5c71c0d7f72f7d105ea3be9332
+
+# 找颖旭获取
+auth:
+  token: 6dc0**********27d3
+
+sms:
+  api:
+    url: https://openapi.danmi.com/distributor/sendSMS
