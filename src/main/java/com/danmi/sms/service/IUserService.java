@@ -21,7 +21,7 @@ import java.util.List;
 public interface IUserService extends IService<User> {
     User login(User user);
 
-    PageDTO<User> listUserPage(Integer roleId, UserRequest param);
+    PageDTO<User> listUserPage(User loginUser, UserRequest param);
 
     Result register(UserVo user);
 

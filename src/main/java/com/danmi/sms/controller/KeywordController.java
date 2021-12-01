@@ -81,9 +81,17 @@ public class KeywordController {
     @GetMapping("list")
     @ResponseBody
     @ApiOperation(value = "关键词列表", notes = "关键词列表")
-    public Result<Object> list(KeywordRequest keyword) {
+    public Result<Object> list(KeywordRequest keyword, HttpServletRequest request) {
 
-        PageDTO<Keyword> rolePageDTO = keywordService.listKeywordPage(keyword);
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
+
+
+        PageDTO<Keyword> rolePageDTO = keywordService.listKeywordPage(keyword, loginUser);
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());
     }
 

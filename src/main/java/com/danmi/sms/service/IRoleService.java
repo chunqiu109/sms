@@ -4,6 +4,7 @@ import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Menu;
 import  com.danmi.sms.entity.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.RoleRequest;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public interface IRoleService extends IService<Role> {
 
-    PageDTO<Role> listRolePage(RoleRequest role);
+    PageDTO<Role> listRolePage(RoleRequest role, User loginUser);
 
     List<Menu> getMenuList(Integer roleId);
 }

@@ -3,6 +3,7 @@ package com.danmi.sms.service;
 import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Template;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.TemplateRequest;
 
 /**
@@ -15,5 +16,5 @@ import com.danmi.sms.entity.request.TemplateRequest;
  */
 public interface ITemplateService extends IService<Template> {
 
-    PageDTO<Template> listTemplatePage(TemplateRequest template);
+    PageDTO<Template> listTemplatePage(TemplateRequest template, User loginUser);
 }

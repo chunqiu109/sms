@@ -58,7 +58,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public PageDTO<User> listUserPage(Integer roleId, UserRequest param) {
+    public PageDTO<User> listUserPage(User loginUser, UserRequest param) {
+        Integer roleId = loginUser.getRoleId();
+
         Integer pageNum = param.getPage();
         Integer pageSize = param.getLimit();
         if (pageSize==null || pageSize.equals(0)) {
@@ -69,17 +71,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
 
         Role role = roleService.getById(roleId);
-//        Boolean isSuperAdmin = role.getCode().equals("super_admin");
-        Boolean isSuperAdmin = "super_admin".equals(role.getCode());
+        Boolean isSuperAdmin = "system_admin".equals(role.getCode());
 
         IPage<User> page = new Page<>(pageNum, pageSize);
 
-
-        LambdaQueryWrapper<User> wrapper = Wrappers.<User>lambdaQuery().like(StringUtils.isNotBlank(param.getPhone()), User::getPhone, param.getPhone())
-                .notIn(!isSuperAdmin, User::getRoleId, role.getId());
-
+        LambdaQueryWrapper<User> wrapper = Wrappers.<User>lambdaQuery().like(StringUtils.isNotBlank(param.getPhone()), User::getPhone, param.getPhone());
 
         IPage<User> data = userMapper.selectPage(page, wrapper);
+
+        if (!isSuperAdmin) { // 不是超级管理员，只可以查看自己创建的人员
+            List<User> collect = data.getRecords().stream().filter(i -> i.getCode().substring(0, loginUser.getCode().length() + 1).equals(loginUser.getCode())).collect(Collectors.toList());
+            data.setRecords(collect);
+        }
+
         return new PageDTO<>(data);
     }
 

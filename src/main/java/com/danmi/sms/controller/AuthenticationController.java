@@ -1,13 +1,16 @@
 package com.danmi.sms.controller;
 
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Authentication;
+import com.danmi.sms.entity.Role;
 import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.AuthenticationRequest;
 import com.danmi.sms.enums.AuthenticationApproveStatusEnum;
 import com.danmi.sms.service.IAuthenticationService;
+import com.danmi.sms.service.IRoleService;
 import com.danmi.sms.utils.FilePathUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -45,6 +48,8 @@ public class AuthenticationController {
 
     @Autowired
     private IAuthenticationService authenticationService;
+    @Autowired
+    private IRoleService roleService;
     @Value("${authent.file.path}")
     private String uploadPath;
 
@@ -107,41 +112,127 @@ public class AuthenticationController {
         return Result.fail("用户未登录！");
     }
 
-    // @ todo 权限!!!!!
+    /**
+     * 系统管理员查看认证列表
+     * @param authentication
+     * @param request
+     * @return
+     */
     @GetMapping("list")
     @ResponseBody
-    @ApiOperation(value = "认证列表", notes = "认证列表")
-    public Result<Object> list(AuthenticationRequest authentication) {
+    @ApiOperation(value = "系统管理员查看认证列表", notes = "系统管理员查看认证列表")
+    public Result<Object> list(AuthenticationRequest authentication, HttpServletRequest request) {
+
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
+        Role role = roleService.getById(loginUser.getRoleId());
+        Boolean isSuperAdmin = "system_admin".equals(role.getCode());
+
+        if (!isSuperAdmin) {
+            return Result.success("您没有权限查看！");
+        }
 
         PageDTO<Authentication> rolePageDTO = authenticationService.listAuthenticationPage(authentication);
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());
     }
 
-    // @ todo 权限
+    /**
+     * 当前登录人的个人认证详情
+     * @param authentication
+     * @param request
+     * @return
+     */
+    @GetMapping("get-by-single")
+    @ResponseBody
+    @ApiOperation(value = "当前登录人的个人认证详情", notes = "当前登录人的个人认证详情")
+    public Result<Object> getBySingle(AuthenticationRequest authentication, HttpServletRequest request) {
+
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
+        Authentication one = authenticationService.getOne(Wrappers.<Authentication>lambdaQuery().eq(Authentication::getCa, loginUser.getCode()));
+
+        if (ObjectUtils.isEmpty(one)) {
+             return Result.fail("没有查到您的认证信息");
+        } else {
+            return Result.success(authentication);
+        }
+    }
+
+    /**
+     * 管理员： 根据id获取认证
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     @ResponseBody
     @ApiOperation(value = "根据id获取认证", notes = "根据id获取认证")
-    public Result<Object> getById(@PathVariable(value = "id") Integer id) {
+    public Result<Object> getById(@PathVariable(value = "id") Integer id, HttpServletRequest request) {
+
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
+        Role role = roleService.getById(loginUser.getRoleId());
+        Boolean isSuperAdmin = "system_admin".equals(role.getCode());
+
+        if (!isSuperAdmin) {
+            return Result.success("您没有权限查看！");
+        }
+
         Authentication authentication = authenticationService.getById(id);
         return Result.success(authentication);
     }
 
-    // @ todo 权限
+    /**
+     * 管理员： 根据id批量删除认证
+     * @return
+     */
     @DeleteMapping("/{ids}")
     @ResponseBody
     @ApiOperation(value = "根据id批量删除认证", notes = "根据id批量删除认证")
     @ApiImplicitParams({@ApiImplicitParam(name = "ids", value = "删除的签名id，多个id逗号分割", dataTypeClass = String.class)})
-    public Result<Object> deleteRoleByIds(@PathVariable("ids") String ids) {
+    public Result<Object> deleteRoleByIds(@PathVariable("ids") String ids, HttpServletRequest request) {
+
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
+        Role role = roleService.getById(loginUser.getRoleId());
+        Boolean isSuperAdmin = "system_admin".equals(role.getCode());
+
+        if (!isSuperAdmin) {
+            return Result.success("您没有权限删除！");
+        }
+
         List<String> cids = Arrays.asList(ids.split(","));
         authenticationService.removeByIds(cids);
         return Result.success("删除成功！");
     }
 
-    // @ todo 权限
+
     @PutMapping("")
     @ResponseBody
     @ApiOperation(value = "根据id更新认证", notes = "根据id更新认证")
-    public Result<Object> updateRoleById(@RequestBody Authentication authentication) {
+    public Result<Object> updateRoleById(@RequestBody Authentication authentication, HttpServletRequest request) {
+
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
         if (ObjectUtils.isEmpty(authentication.getId())) {
             return Result.fail("必传参数不能为空！");
         }
@@ -157,7 +248,21 @@ public class AuthenticationController {
     @PostMapping("approve")
     @ResponseBody
     @ApiOperation(value = "审核", notes = "审核")
-    public Result<Object> approve(@RequestBody Authentication authentication) {
+    public Result<Object> approve(@RequestBody Authentication authentication, HttpServletRequest request) {
+
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
+        Role role = roleService.getById(loginUser.getRoleId());
+        Boolean isSuperAdmin = "system_admin".equals(role.getCode());
+
+        if (!isSuperAdmin) {
+            return Result.success("您没有权限查看！");
+        }
+
         if (ObjectUtils.isEmpty(authentication.getId()) || ObjectUtils.isEmpty(authentication.getApproveStatus())) {
             return Result.fail("必传参数不能为空！");
         }

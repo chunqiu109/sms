@@ -27,8 +27,6 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +54,7 @@ public class UserController {
         User loginUser = new User();
         if (userInfo instanceof User) {
             loginUser = (User) userInfo;
-            PageDTO<User> users  = userService.listUserPage(loginUser.getRoleId(), param);
+            PageDTO<User> users  = userService.listUserPage(loginUser, param);
             users.getRecords().stream().map(i -> i.setPassword("")).collect(Collectors.toList());
             return Result.success(users);
         }
@@ -164,11 +162,11 @@ public class UserController {
         String parentCode = loginUser.getCode();
         // userCode 查询自己下边有没有新建的用户，有的话就在之上加1，没有拼接
         List<User> list = userService.list();
-        list.stream().filter(i -> i.getCode().substring(0, parentCode.length()+1).equals(parentCode)).map(i -> i.setIntegerCode(Integer.valueOf(i.getCode()))).collect(Collectors.toList());
+        List<User> list1 = list.stream().filter(i -> i.getCode().substring(0, parentCode.length() + 1).equals(parentCode)).map(i -> i.setIntegerCode(Integer.valueOf(i.getCode()))).collect(Collectors.toList());
 
-        if (ObjectUtils.isNotEmpty(list) && list.size()!=0){
-            list.sort((a , b) -> b.getIntegerCode()-a.getIntegerCode());
-            Integer integerCode = list.get(0).getIntegerCode();
+        if (ObjectUtils.isNotEmpty(list1) && list1.size()!=0){
+            list1.sort((a , b) -> b.getIntegerCode()-a.getIntegerCode());
+            Integer integerCode = list1.get(0).getIntegerCode();
             user.setCode(String.valueOf(integerCode+1));
         } else {
             user.setCode(parentCode+ UserCodeUtil.generateRegisterCode());

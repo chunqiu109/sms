@@ -18,7 +18,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         // 获取session， 判断session用户信息是否存在
         Object user = request.getSession().getAttribute("userInfo");
-        // @todo
+        // @todo 正式使用的时候要打开
 //        if(user == null){
 //            // 未登录
 //            log.debug("未登录请求：" + request.getRequestURI());

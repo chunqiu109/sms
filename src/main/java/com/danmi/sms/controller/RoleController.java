@@ -5,6 +5,7 @@ import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Menu;
 import com.danmi.sms.entity.Role;
+import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.RoleRequest;
 import com.danmi.sms.service.IRoleService;
 import io.swagger.annotations.Api;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,9 +38,15 @@ public class RoleController {
     @GetMapping("/list")
     @ResponseBody
     @ApiOperation(value = "获取角色列表（分页）", notes = "获取角色列表（分页）")
-    public Result<Object> getRoleList(RoleRequest role) {
+    public Result<Object> getRoleList(RoleRequest role, HttpServletRequest request) {
 
-        PageDTO<Role> rolePageDTO = roleService.listRolePage(role);
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
+        PageDTO<Role> rolePageDTO = roleService.listRolePage(role, loginUser);
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());
     }
 
@@ -52,12 +61,19 @@ public class RoleController {
     @PostMapping("")
     @ResponseBody
     @ApiOperation(value = "添加角色", notes = "添加角色")
-    public Result<Object> addRole(@RequestBody Role role) {
+    public Result<Object> addRole(@RequestBody Role role, HttpServletRequest request) {
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
         // 判断必须参数
         if (!StringUtils.hasLength(role.getName()) || !StringUtils.hasLength(role.getCode())) {
             return Result.fail("必传参数不能为空！");
         }
 
+        role.setCa(loginUser.getCode());
+        role.setCt(LocalDateTime.now());
         boolean flag = roleService.save(role);
         if (flag) {
             return Result.success("添加成功！");

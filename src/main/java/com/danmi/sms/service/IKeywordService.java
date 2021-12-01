@@ -3,6 +3,7 @@ package com.danmi.sms.service;
 import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Keyword;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.KeywordRequest;
 
 /**
@@ -15,5 +16,5 @@ import com.danmi.sms.entity.request.KeywordRequest;
  */
 public interface IKeywordService extends IService<Keyword> {
 
-    PageDTO<Keyword> listKeywordPage(KeywordRequest keyword);
+    PageDTO<Keyword> listKeywordPage(KeywordRequest keyword, User loginUser);
 }

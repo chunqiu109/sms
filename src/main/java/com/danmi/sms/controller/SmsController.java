@@ -1,6 +1,5 @@
 package com.danmi.sms.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.entity.*;
 import com.danmi.sms.entity.request.SmsRequest;
@@ -23,8 +22,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -122,14 +119,6 @@ public class SmsController {
             return Result.fail("调用短信接口失败!");
         }
     }
-
-//    public static void main(String[] args) {
-//        List<String> phones = new ArrayList<>();
-//        phones.add("1");
-//        phones.add("2");
-//        phones.add("3");
-//        phones.stream().iterator().
-//    }
 
 
     private String getPhoneProvider(String phone) {

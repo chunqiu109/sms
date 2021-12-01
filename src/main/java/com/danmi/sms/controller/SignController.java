@@ -72,9 +72,16 @@ public class SignController {
     @GetMapping("list")
     @ResponseBody
     @ApiOperation(value = "签名列表", notes = "签名列表")
-    public Result<Object> list(SignRequest sign) {
+    public Result<Object> list(SignRequest sign, HttpServletRequest request) {
 
-        PageDTO<Sign> rolePageDTO = signService.listSignPage(sign);
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
+
+        PageDTO<Sign> rolePageDTO = signService.listSignPage(sign, loginUser);
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());
     }
 

@@ -67,9 +67,15 @@ public class TemplateController {
     @GetMapping("list")
     @ResponseBody
     @ApiOperation(value = "模板列表", notes = "模板列表")
-    public Result<Object> list(TemplateRequest template) {
+    public Result<Object> list(TemplateRequest template, HttpServletRequest request) {
 
-        PageDTO<Template> rolePageDTO = templateService.listTemplatePage(template);
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        User loginUser = new User();
+        if (!(userInfo instanceof User)) {
+            return Result.success("您尚未登录！");
+        }
+
+        PageDTO<Template> rolePageDTO = templateService.listTemplatePage(template, loginUser);
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());
     }
 
