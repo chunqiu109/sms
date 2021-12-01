@@ -224,17 +224,23 @@ public class UserController {
 
     /**
      * 给用户添加角色
-     * @param id
      * @return
      */
-    @GetMapping("/{id}")
+    @PostMapping("/userAddRole")
     @ResponseBody
-    @ApiOperation(value = "根据id获取用户", notes = "根据id获取用户")
-    public Result<Object> userAddRole(@PathVariable(value = "id") Integer id) {
-//        @todo
+    @ApiOperation(value = "给用户添加角色", notes = "给用户添加角色")
+    public Result<Object> userAddRole(User user) {
+        if (ObjectUtils.isEmpty(user.getRoleId()) || ObjectUtils.isEmpty(user.getId())) {
+            return Result.fail("必传参数不可为空！");
+        }
 
-        User user = userService.getById(id);
-        return Result.success(user);
+        boolean flag = userService.updateById(user);
+        if (flag) {
+            return Result.success("授权成功！");
+        } else {
+            return Result.fail("授权失败！");
+        }
+
     }
 
     public Boolean checkPhone(String phone) {
