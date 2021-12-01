@@ -59,11 +59,25 @@ public class AuthenticationController {
             return Result.fail("必传参数不能为空！");
         }
 
+        if (file.isEmpty()) {
+            return Result.fail("请上传文件！");
+        }
+
         String pathStr = FilePathUtils.getFilePath();
 
         String originalFilename = file.getOriginalFilename();
         int index=originalFilename.lastIndexOf('.')+1;//获取地址.的前面的数字，从0开始
         String type=originalFilename.substring(index);//从地址.开始截取后缀
+
+//        jpg/jpeg/png/gif
+        if (!("jpg".equals(type)||"jpeg".equals(type)||"png".equals(type)||"gif".equals(type))) {
+            return Result.fail("文件格式不正确，支持jpg/jpeg/png/gif！");
+        }
+
+        long size = file.getSize();
+        if (size/1024/1024>10) {
+            return Result.fail("文件大小不能超过10M！");
+        }
 
         //生成新文件名字
         String newFileName = System.currentTimeMillis() + "." + type;
