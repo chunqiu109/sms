@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -18,6 +19,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
 public class SendLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,11 +44,6 @@ public class SendLog implements Serializable {
      * 发送状态
      */
     private String status;
-
-    /**
-     * 手机号
-     */
-    private String phone;
 
     /**
      * 每个批次号码数量

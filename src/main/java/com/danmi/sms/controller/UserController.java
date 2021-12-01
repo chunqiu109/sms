@@ -1,6 +1,7 @@
 package com.danmi.sms.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.danmi.sms.utils.PhoneUtil;
 import com.danmi.sms.utils.UserCodeUtil;
 import com.danmi.sms.vo.UserVo;
 import com.danmi.sms.common.vo.Result;
@@ -106,7 +107,7 @@ public class UserController {
             return Result.fail("手机号不能为空！");
         }
 
-        if (!checkPhone(user.getPhone())) {
+        if (!PhoneUtil.checkPhone(user.getPhone())) {
             return Result.fail("手机号格式有误！");
         }
 
@@ -243,9 +244,5 @@ public class UserController {
 
     }
 
-    public Boolean checkPhone(String phone) {
-        Pattern p = Pattern.compile("^[1][3,4,5,6,7,8,9][0-9]{9}$");
-        Matcher m = p.matcher(phone);
-        return m.matches();
-    }
+
 }

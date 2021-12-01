@@ -28,6 +28,8 @@ public class SendDetails implements Serializable {
 
     private String ca;
 
+    private String msg;
+
     private LocalDateTime ct;
 
     /**
@@ -39,6 +41,8 @@ public class SendDetails implements Serializable {
      * 发送状态
      */
     private String status;
+
+    private String phone;
 
 
 }

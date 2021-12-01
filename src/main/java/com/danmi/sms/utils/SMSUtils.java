@@ -1,6 +1,5 @@
 package com.danmi.sms.utils;
 
-import com.alibaba.fastjson.JSONObject;
 import com.danmi.sms.entity.response.SmsResponse;
 import com.google.common.base.Joiner;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -15,9 +14,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URLEncoder;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class SMSUtils {
