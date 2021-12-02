@@ -5,6 +5,7 @@ package com.danmi.sms;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 @MapperScan("com.danmi.sms.mapper")
@@ -12,7 +13,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SmsApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SmsApplication.class, args);
+		ConfigurableApplicationContext context = SpringApplication.run(SmsApplication.class, args);
+//		for (String name : context.getBeanDefinitionNames()) {
+//			System.out.println(name);
+//		}
 	}
 
 }
