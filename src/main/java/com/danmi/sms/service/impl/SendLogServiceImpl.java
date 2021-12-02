@@ -19,13 +19,16 @@ import com.danmi.sms.service.ISendLogService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danmi.sms.utils.BigDecimalUtil;
 import com.danmi.sms.utils.DateUtils;
+import com.danmi.sms.utils.UserUtils;
 import com.danmi.sms.vo.SendDetailsVO;
 import com.danmi.sms.vo.SendLogFailVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -39,12 +42,15 @@ import java.util.stream.Collectors;
  * @since 2021-11-30
  */
 @Service
+@Slf4j
 public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> implements ISendLogService {
 
     @Autowired
     private SendLogMapper sendLogMapper;
     @Autowired
     private ISendDetailsService sendDetailsService;
+    @Autowired
+    private UserUtils userUtils;
 
     @Override
     public PageDTO<SendLog> general(SendLogRequest request) {
@@ -60,13 +66,22 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
         }
         IPage<SendLog> page = new Page<>(pageNum, pageSize);
 
+        LocalDate endTime = request.getEndTime();
+
+        if (!Objects.isNull(request.getEndTime())) {
+            request.setEndTime(endTime.plusDays(1L));
+        }
+
         LambdaQueryWrapper<SendLog> wrapper = Wrappers.<SendLog>lambdaQuery().gt(!Objects.isNull(request.getStartTime()), SendLog::getCt, request.getStartTime())
-                .le(!Objects.isNull(request.getEndTime()), SendLog::getCt, request.getEndTime().plusDays(1L))
+                .le(!Objects.isNull(endTime), SendLog::getCt, request.getEndTime())
+//                .le(false, SendLog::getCt, request.getEndTime().plusDays(1L))
                 .eq(StringUtils.hasLength(request.getStatus()), SendLog::getStatus, request.getStatus())
                 .like(StringUtils.hasLength(request.getContent()), SendLog::getContent, request.getContent());
 
         IPage<SendLog> data = sendLogMapper.selectPage(page, wrapper);
-        data.getRecords().stream().forEach(i -> {
+        User user = userUtils.getUser();
+        List<SendLog> collect = data.getRecords().stream().filter(i -> i.getCa().substring(0, user.getCode().length() + 1).equals(user.getCode())).collect(Collectors.toList());
+        collect.stream().forEach(i -> {
             int count = sendDetailsService.count(Wrappers.<SendDetails>lambdaQuery().eq(SendDetails::getBatch, i.getBatch()));
 
             int successCount = sendDetailsService.count(Wrappers.<SendDetails>lambdaQuery().eq(SendDetails::getBatch, i.getBatch())
@@ -83,14 +98,22 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
             i.setBillingNumber(successCount*num);
         });
 
+        data.setRecords(collect);
+
         return new PageDTO<>(data);
     }
 
     @Override
     public SendLogFailVO statusAnalysis(SendDetailRequest request, User user) {
 
+        LocalDate endTime = request.getEndTime();
+
+        if (!Objects.isNull(request.getEndTime())) {
+            request.setEndTime(endTime.plusDays(1L));
+        }
+
         LambdaQueryWrapper<SendLog> wrapper = Wrappers.<SendLog>lambdaQuery().gt(!Objects.isNull(request.getStartTime()), SendLog::getCt, request.getStartTime())
-                .le(!Objects.isNull(request.getEndTime()), SendLog::getCt, request.getEndTime().plusDays(1L));
+                .le(!Objects.isNull(endTime), SendLog::getCt, request.getEndTime());
 
         List<SendLog> list = list(wrapper);
         list = list.stream().filter(i -> i.getCa().substring(0, user.getCode().length()+1).equals(user.getCode())).collect(Collectors.toList());

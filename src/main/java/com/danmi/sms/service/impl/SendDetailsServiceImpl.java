@@ -14,6 +14,7 @@ import com.danmi.sms.vo.SendDetailsVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -34,8 +35,13 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
     @Override
     public List<SendDetails> sendDetails(SendDetailRequest request) {
         User user = userUtils.getUser();
+        LocalDate endTime = request.getEndTime();
+
+        if (!Objects.isNull(request.getEndTime())) {
+            request.setEndTime(endTime.plusDays(1L));
+        }
         LambdaQueryWrapper<SendDetails> wrapper = Wrappers.<SendDetails>lambdaQuery().gt(!Objects.isNull(request.getStartTime()), SendDetails::getCt, request.getStartTime())
-                .le(!Objects.isNull(request.getEndTime()), SendDetails::getCt, request.getEndTime().plusDays(1L))
+                .le(!Objects.isNull(endTime), SendDetails::getCt, request.getEndTime())
 //                .eq(!Objects.isNull(request.getType()), SendDetails::getType, request.getEndTime())
                 .eq(!Objects.isNull(request.getStatus()), SendDetails::getStatus, request.getStatus());
         List<SendDetails> list = list(wrapper);
