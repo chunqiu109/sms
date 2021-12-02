@@ -39,6 +39,8 @@ public class UserController {
     @Autowired
     private IUserService userService;
     @Autowired
+    private HttpServletRequest httpServletRequest;
+    @Autowired
     private IRoleService roleService;
     @Value("${role.digit:5}")
     private static Integer roleDigit;
