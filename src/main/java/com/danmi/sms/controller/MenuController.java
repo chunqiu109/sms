@@ -2,14 +2,11 @@ package com.danmi.sms.controller;
 
 
 import com.danmi.sms.common.vo.Result;
-import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Menu;
 import com.danmi.sms.entity.Role;
 import com.danmi.sms.entity.User;
-import com.danmi.sms.entity.request.MenuRequest;
 import com.danmi.sms.service.IMenuService;
 import com.danmi.sms.service.IRoleService;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;

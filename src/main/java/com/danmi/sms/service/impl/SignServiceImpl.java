@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Role;
 import com.danmi.sms.entity.Sign;
-import com.danmi.sms.entity.Template;
 import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.SignRequest;
 import com.danmi.sms.mapper.SignMapper;

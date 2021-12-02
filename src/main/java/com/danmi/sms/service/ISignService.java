@@ -1,7 +1,6 @@
 package com.danmi.sms.service;
 
 import com.danmi.sms.dto.PageDTO;
-import com.danmi.sms.entity.Role;
 import com.danmi.sms.entity.Sign;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danmi.sms.entity.User;

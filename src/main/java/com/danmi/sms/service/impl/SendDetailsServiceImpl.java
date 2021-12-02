@@ -3,7 +3,6 @@ package com.danmi.sms.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.danmi.sms.entity.SendDetails;
-import com.danmi.sms.entity.SendLog;
 import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.SendDetailRequest;
 import com.danmi.sms.mapper.SendDetailsMapper;

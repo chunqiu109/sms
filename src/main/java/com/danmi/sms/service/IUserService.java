@@ -2,13 +2,11 @@ package com.danmi.sms.service;
 
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
-import com.danmi.sms.entity.Menu;
 import  com.danmi.sms.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danmi.sms.entity.request.UserRequest;
 import com.danmi.sms.vo.UserVo;
 
-import java.util.List;
 
 /**
  * <p>
