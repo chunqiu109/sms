@@ -13,10 +13,10 @@ public class SendDetailRequest  extends Request{
 
     private String status;
 
-    /**
-     * 运营商
-     */
-    private String providerName;
+//    /**
+//     * 运营商
+//     */
+//    private String providerName;
 
     private String phone;
 }

@@ -22,7 +22,6 @@ public class UserUtils {
 
     public User getUser() {
         Object userInfo = request.getSession().getAttribute("userInfo");
-//        Object userInfo2 = getSession().getAttribute("userInfo");
         User loginUser;
         if (userInfo instanceof User) {
             loginUser = (User) userInfo;

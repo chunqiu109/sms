@@ -57,7 +57,7 @@ public class AuthenticationController {
     @PostMapping("certify")
     @ResponseBody
     @ApiOperation(value = "企业认证", notes = "企业认证")
-    public Result<Object> addRole(Authentication authentication, HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException {
+    public Result<Object> addAuthentication(Authentication authentication, HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException {
 //         判断必须参数
         if (!StringUtils.hasLength(authentication.getCompany()) || !StringUtils.hasLength(authentication.getCertification())
                 || !StringUtils.hasLength(authentication.getLegalPerson()) || file.isEmpty()) {
@@ -201,7 +201,7 @@ public class AuthenticationController {
     @ResponseBody
     @ApiOperation(value = "根据id批量删除认证", notes = "根据id批量删除认证")
     @ApiImplicitParams({@ApiImplicitParam(name = "ids", value = "删除的签名id，多个id逗号分割", dataTypeClass = String.class)})
-    public Result<Object> deleteRoleByIds(@PathVariable("ids") String ids, HttpServletRequest request) {
+    public Result<Object> deleteAuthenticationByIds(@PathVariable("ids") String ids, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
         User loginUser = new User();
@@ -225,7 +225,7 @@ public class AuthenticationController {
     @PutMapping("")
     @ResponseBody
     @ApiOperation(value = "根据id更新认证", notes = "根据id更新认证")
-    public Result<Object> updateRoleById(@RequestBody Authentication authentication, HttpServletRequest request) {
+    public Result<Object> updateAuthenticationById(@RequestBody Authentication authentication, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
         User loginUser = new User();
