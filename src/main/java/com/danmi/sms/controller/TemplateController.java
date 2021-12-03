@@ -45,7 +45,7 @@ public class TemplateController {
         }
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+        User loginUser;
         if (userInfo instanceof User) {
             loginUser = (User) userInfo;
 
@@ -69,11 +69,11 @@ public class TemplateController {
     public Result<Object> list(TemplateRequest template, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
-
+        User loginUser = (User) userInfo;
         PageDTO<Template> rolePageDTO = templateService.listTemplatePage(template, loginUser);
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());
     }

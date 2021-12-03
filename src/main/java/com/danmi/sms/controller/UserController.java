@@ -53,7 +53,7 @@ public class UserController {
     public Result list(UserRequest param, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+        User loginUser;
         if (userInfo instanceof User) {
             loginUser = (User) userInfo;
             PageDTO<User> users  = userService.listUserPage(loginUser, param);
@@ -142,11 +142,11 @@ public class UserController {
     public Result<Object> addUser(@RequestBody User user, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
-
+        User loginUser = (User) userInfo;
         // 判断必须参数
         if (!org.springframework.util.StringUtils.hasLength(user.getPhone()) || !org.springframework.util.StringUtils.hasLength(user.getPassword())) {
             return Result.fail("必传参数不能为空！");
@@ -206,7 +206,7 @@ public class UserController {
     @ApiOperation(value = "获取当前用户的菜单列表", notes = "获取当前用户的菜单列表")
     public Result<Object> getMenuList(HttpServletRequest request) {
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+        User loginUser;
         if (userInfo instanceof User) {
             loginUser = (User) userInfo;
             List<Menu> menus  = roleService.getMenuList(loginUser.getRoleId());

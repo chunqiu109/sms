@@ -52,10 +52,11 @@ public class SmsController {
     @GetMapping("/send")
     public Result<Object> send(@RequestBody SmsRequest request, HttpServletRequest servletRequest) {
         Object userInfo = servletRequest.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
+        User loginUser = (User) userInfo;
 
         List<SendDetails> sendDetails = Lists.newArrayList();
 

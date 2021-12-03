@@ -19,7 +19,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,7 +91,7 @@ public class AuthenticationController {
         file.transferTo(targetFile);
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+        User loginUser;
         if (userInfo instanceof User) {
             loginUser = (User) userInfo;
 
@@ -124,11 +123,11 @@ public class AuthenticationController {
     public Result<Object> list(AuthenticationRequest authentication, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
-
+        User loginUser = (User) userInfo;
         Role role = roleService.getById(loginUser.getRoleId());
         Boolean isSuperAdmin = "system_admin".equals(role.getCode());
 
@@ -152,7 +151,7 @@ public class AuthenticationController {
     public Result<Object> getBySingle(AuthenticationRequest authentication, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+        User loginUser = (User) userInfo;
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
@@ -177,11 +176,11 @@ public class AuthenticationController {
     public Result<Object> getById(@PathVariable(value = "id") Integer id, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
-
+        User loginUser = (User) userInfo;
         Role role = roleService.getById(loginUser.getRoleId());
         Boolean isSuperAdmin = "system_admin".equals(role.getCode());
 
@@ -204,11 +203,11 @@ public class AuthenticationController {
     public Result<Object> deleteAuthenticationByIds(@PathVariable("ids") String ids, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
-
+        User loginUser = (User) userInfo;
         Role role = roleService.getById(loginUser.getRoleId());
         Boolean isSuperAdmin = "system_admin".equals(role.getCode());
 
@@ -228,11 +227,11 @@ public class AuthenticationController {
     public Result<Object> updateAuthenticationById(@RequestBody Authentication authentication, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
-
+        User loginUser = (User) userInfo;
         if (ObjectUtils.isEmpty(authentication.getId())) {
             return Result.fail("必传参数不能为空！");
         }
@@ -251,11 +250,11 @@ public class AuthenticationController {
     public Result<Object> approve(@RequestBody Authentication authentication, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
-
+        User loginUser = (User) userInfo;
         Role role = roleService.getById(loginUser.getRoleId());
         Boolean isSuperAdmin = "system_admin".equals(role.getCode());
 

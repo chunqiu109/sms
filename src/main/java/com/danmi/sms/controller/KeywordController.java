@@ -54,7 +54,7 @@ public class KeywordController {
         }
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+        User loginUser;
         if (userInfo instanceof User) {
             loginUser = (User) userInfo;
 
@@ -84,13 +84,12 @@ public class KeywordController {
     public Result<Object> list(KeywordRequest keyword, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
 
-
-
+        User loginUser = (User) userInfo;
         PageDTO<Keyword> rolePageDTO = keywordService.listKeywordPage(keyword, loginUser);
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());
     }

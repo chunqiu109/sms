@@ -112,8 +112,9 @@ public class CustomerController {
         Object userInfo = request.getSession().getAttribute("userInfo");
         User loginUser = new User();
         if (userInfo instanceof User) {
-            loginUser = (User) userInfo;
+            return Result.fail("用户未登录");
         }
+        loginUser = (User) userInfo;
 
         String loginName = loginUser.getUsername();
         List<Customer> customers = new ArrayList<>();

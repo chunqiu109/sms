@@ -47,7 +47,7 @@ public class SignController {
         }
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+        User loginUser;
         if (userInfo instanceof User) {
             loginUser = (User) userInfo;
 
@@ -73,11 +73,11 @@ public class SignController {
     public Result<Object> list(SignRequest sign, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
-
+        User loginUser = (User) userInfo;
 
         PageDTO<Sign> rolePageDTO = signService.listSignPage(sign, loginUser);
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());

@@ -41,11 +41,11 @@ public class RoleController {
     public Result<Object> getRoleList(RoleRequest role, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
-
+        User loginUser = (User) userInfo;
         PageDTO<Role> rolePageDTO = roleService.listRolePage(role, loginUser);
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());
     }
@@ -63,10 +63,12 @@ public class RoleController {
     @ApiOperation(value = "添加角色", notes = "添加角色")
     public Result<Object> addRole(@RequestBody Role role, HttpServletRequest request) {
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
+        User loginUser = (User) userInfo;
+
         // 判断必须参数
         if (!StringUtils.hasLength(role.getName()) || !StringUtils.hasLength(role.getCode())) {
             return Result.fail("必传参数不能为空！");

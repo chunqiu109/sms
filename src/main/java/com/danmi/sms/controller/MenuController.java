@@ -40,10 +40,11 @@ public class MenuController {
     @ApiOperation(value = "获取菜单列表", notes = "获取菜单列表")
     public Result<Object> getMenuList(HttpServletRequest request) {
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
+        User loginUser = (User) userInfo;
 
         List<Integer> list;
         Role role = roleService.getById(loginUser.getRoleId());
@@ -64,11 +65,11 @@ public class MenuController {
     public Result<Object> addMenu(@RequestBody Menu menu, HttpServletRequest request) {
 
         Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser = new User();
+
         if (!(userInfo instanceof User)) {
             return Result.success("您尚未登录！");
         }
-
+        User loginUser = (User) userInfo;
         // 判断必须参数
         if (!StringUtils.hasLength(menu.getName()) || !StringUtils.hasLength(menu.getCode())) {
             return Result.fail("必传参数不能为空！");
