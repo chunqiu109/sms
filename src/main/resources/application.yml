@@ -59,12 +59,12 @@ role:
 
 
 account:
-  id: 761563
-  sid: 9d7f0e5c71c0d7f72f7d105ea3be9332
+  id: 762364
+  sid: 395eeca7ef9342f78d01a5986a794d0b
 
 # 找颖旭获取
 auth:
-  token: 6dc0**********27d3
+  token: acb931af153f0dddc546d7985f3889e8
 
 sms:
   api:
