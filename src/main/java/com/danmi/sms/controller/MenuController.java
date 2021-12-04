@@ -56,7 +56,8 @@ public class MenuController {
             list = new ArrayList<>(Arrays.asList(split)).stream().map(i -> Integer.valueOf(i)).collect(Collectors.toList());
         }
 
-        return Result.success( menuService.findTree(list));
+        int option = 0;
+        return Result.success( menuService.findTree(list, option));
     }
 
     @PostMapping("")

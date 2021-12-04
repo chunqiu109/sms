@@ -29,6 +29,9 @@ public class Menu implements Serializable {
 
     private Integer parentId;
 
+//    0-不是，1-是
+    private Integer isMenu;
+
     private String code;
 
     private String name;

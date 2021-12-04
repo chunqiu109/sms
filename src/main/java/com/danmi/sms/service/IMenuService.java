@@ -15,5 +15,5 @@ import java.util.List;
  */
 public interface IMenuService extends IService<Menu> {
 
-    List<Menu> findTree(List<Integer> list);
+    List<Menu> findTree(List<Integer> list, int option);
 }

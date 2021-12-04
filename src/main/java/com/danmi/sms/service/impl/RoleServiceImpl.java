@@ -69,6 +69,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public List<Menu> getMenuList(Integer roleId) {
         Role role = this.getById(roleId);
         List<Integer> list;
+        int option = 1;
         if ("system_admin".equals(role.getCode())) {
             list = null;
         } else {
@@ -76,6 +77,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
             list = new ArrayList<>(Arrays.asList(split)).stream().map(i -> Integer.valueOf(i)).collect(Collectors.toList());
         }
 
-        return menuService.findTree(list);
+        return menuService.findTree(list, option);
     }
 }

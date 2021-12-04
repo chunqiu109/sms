@@ -7,6 +7,7 @@ import com.danmi.sms.service.IMenuService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -20,13 +21,23 @@ import java.util.*;
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IMenuService {
 
 
-    public List<Menu> findTree(List<Integer> ids) {
+    /**
+     *
+     * @param ids
+     * @param option 1 只筛选菜单
+     * @return
+     */
+    public List<Menu> findTree(List<Integer> ids, int option) {
         List<Menu> allMenu;
         //查询所有菜单
         if (ids != null) {
             allMenu = this.listByIds(ids);
         } else {
             allMenu = this.list();
+        }
+
+        if (option == 1) {
+            allMenu = allMenu.stream().filter(i -> i.getIsMenu().equals(1)).collect(Collectors.toList());
         }
 
         //根节点
