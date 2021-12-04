@@ -2,6 +2,7 @@ package com.danmi.sms.utils;
 
 import com.danmi.sms.entity.response.SmsResponse;
 import com.google.common.base.Joiner;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Component
+@Slf4j
 public class SMSUtils {
     private static String accountId;
     private static String accountSid;
@@ -69,10 +71,12 @@ public class SMSUtils {
         long timestamp = System.currentTimeMillis();
         // 签名
         String sig = DigestUtils.md5Hex(accountSid + authToken + timestamp);
+        log.info(timestamp + "------------" + sig);
         String phoneStr = Joiner.on(",").join(phones);
 
 
         StringBuilder sb = new StringBuilder();
+
         sb.append("accountSid").append("=").append(accountSid);
 
         params.add("accountSid", accountSid);
