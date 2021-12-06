@@ -1,15 +1,18 @@
 package com.danmi.sms.service;
 
+import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.SendLog;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.SendDetailRequest;
 import com.danmi.sms.entity.request.SendLogRequest;
+import com.danmi.sms.entity.request.SmsRequest;
 import com.danmi.sms.vo.SendDetailsVO;
 import com.danmi.sms.vo.SendLogFailVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -27,4 +30,7 @@ public interface ISendLogService extends IService<SendLog> {
 
     List<SendDetailsVO> dataStatistics(SendDetailRequest request);
 
+    Result send(User loginUser, SmsRequest request);
+
+    Result sendAndProcessService(String sendTime, SmsRequest request, User loginUser, List<String> phones, Map<String, Integer> maps, Integer id);
 }

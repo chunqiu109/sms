@@ -38,6 +38,8 @@ public class SendLog implements Serializable {
 
     private Integer type;
 
+    private String sendTime;
+
     private String content;
 
     /**

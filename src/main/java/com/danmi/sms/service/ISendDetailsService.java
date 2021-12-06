@@ -1,10 +1,14 @@
 package com.danmi.sms.service;
 
+import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.entity.SendDetails;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danmi.sms.entity.request.SendDetailRequest;
+import com.danmi.sms.entity.request.SmsRequest;
 import com.danmi.sms.vo.SendDetailsVO;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -20,4 +24,6 @@ public interface ISendDetailsService extends IService<SendDetails> {
     List<SendDetails> sendDetails(SendDetailRequest request);
 
     List<SendDetailsVO> replyRecord(SendDetailRequest request);
+
+    Result phoneImport(MultipartFile file, SmsRequest request) throws IOException;
 }

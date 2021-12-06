@@ -7,10 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -211,6 +208,12 @@ public class DateUtils {
 
     }
 
+    public static String localDateTimeToString(LocalDateTime localDateTime) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DS_LINE);
+        return dateTimeFormatter.format(localDateTime);
+
+    }
+
     /**
      * String 转 LocalDate
      *
@@ -220,6 +223,23 @@ public class DateUtils {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DS_LINE);
         return  LocalDate.parse(localDate);
 
+    }
+
+    public static LocalDateTime stringToLocalDateTime(String localDate) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DEFAULT);
+        return  LocalDateTime.parse(localDate);
+
+    }
+
+    public static long stringToTimestamp(String localDate) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DEFAULT);
+        LocalDateTime parse = LocalDateTime.parse(localDate);
+        return parse.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+
+    }
+
+    public static long localDateTimeToTimestamp(LocalDateTime localDateTime) {
+        return localDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
     }
 
     /**
