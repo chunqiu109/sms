@@ -32,7 +32,7 @@ public class TransmissionSms {
     /**
      * 定时发送短信 每5分钟一次
      */
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void sendSms() {
         // 查询定时任务
         String string = DateUtils.localDateTimeToString(LocalDateTime.now());
