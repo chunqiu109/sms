@@ -71,9 +71,9 @@ public class SmsController {
      * 接收用户回复
      * @return
      */
-    @GetMapping("/reply")
-    public RespCode reply(@RequestBody List<Reply> replyList) {
-        log.info("接收用户回复: {}", JSONObject.toJSONString(replyList));
+    @PostMapping("/reply")
+    public RespCode reply(@RequestBody Reply reply) {
+        log.info("接收用户回复: {}", JSONObject.toJSONString(reply));
         return new RespCode().setRespCode("0000");
     }
 
@@ -81,9 +81,9 @@ public class SmsController {
      * 接收短信回执
      * @return
      */
-    @GetMapping("/status")
-    public RespCode status(@RequestBody List<SendStatus> sendStatuses) {
-        log.info("接收短信回执: {}", JSONObject.toJSONString(sendStatuses));
+    @PostMapping("/status")
+    public RespCode status(@RequestBody SmsResult smsResult) {
+        log.info("接收短信回执: {}", JSONObject.toJSONString(smsResult));
         return new RespCode().setRespCode("0000");
     }
 

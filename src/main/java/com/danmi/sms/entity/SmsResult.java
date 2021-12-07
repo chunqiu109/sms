@@ -1,6 +1,16 @@
 package com.danmi.sms.entity;
 
-public class SendStatus {
+import java.util.List;
+
+public class SmsResult {
+    private List<SendStatus> smsResult;
+}
+
+
+
+
+
+class SendStatus {
 
     private String smsId;
     private String phone;

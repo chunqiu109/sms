@@ -9,5 +9,5 @@ public class Reply {
     private String content;
     private String MOTime;
     private long timestamp;
-    private long sig;
+    private String sig;
 }
