@@ -82,8 +82,8 @@ public class SmsController {
      * @return
      */
     @PostMapping("/status")
-    public RespCode status(@RequestBody SmsResult smsResult) {
-        log.info("接收短信回执: {}", JSONObject.toJSONString(smsResult));
+    public RespCode status(@RequestBody SendStatus status) {
+        log.info("接收短信回执: {}", JSONObject.toJSONString(status));
         return new RespCode().setRespCode("0000");
     }
 
