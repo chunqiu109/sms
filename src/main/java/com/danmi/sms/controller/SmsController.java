@@ -1,14 +1,11 @@
 package com.danmi.sms.controller;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.alibaba.fastjson.JSONObject;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.entity.*;
 import com.danmi.sms.entity.request.SmsRequest;
-import com.danmi.sms.entity.response.SmsResponse;
 import com.danmi.sms.service.ISendDetailsService;
 import com.danmi.sms.service.ISendLogService;
-import com.danmi.sms.utils.SMSUtils;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -21,10 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 短信服务
@@ -78,8 +72,9 @@ public class SmsController {
      * @return
      */
     @GetMapping("/reply")
-    public void reply(String result) {
-        log.info("接收用户回复: {}", result);
+    public RespCode reply(@RequestBody List<Reply> replyList) {
+        log.info("接收用户回复: {}", JSONObject.toJSONString(replyList));
+        return new RespCode().setRespCode("0000");
     }
 
     /**
@@ -87,8 +82,9 @@ public class SmsController {
      * @return
      */
     @GetMapping("/status")
-    public void status(String result) {
-        log.info("接收短信回执: {}", result);
+    public RespCode status(@RequestBody List<SendStatus> sendStatuses) {
+        log.info("接收短信回执: {}", JSONObject.toJSONString(sendStatuses));
+        return new RespCode().setRespCode("0000");
     }
 
     /**

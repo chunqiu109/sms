@@ -36,6 +36,8 @@ public class SendLog implements Serializable {
      */
     private String batch;
 
+    private String smsId;
+
     private Integer type;
 
     private String sendTime;

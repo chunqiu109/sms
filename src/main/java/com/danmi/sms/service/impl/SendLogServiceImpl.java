@@ -227,7 +227,7 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
         String respDesc = data.getRespDesc();
         if ("0000".equals(data.getRespCode())) {
 
-            this.saveOrUpdate(sendLog.setStatus("success"));
+            this.saveOrUpdate(sendLog.setStatus("success").setSmsId(data.getSmsId()));
             List<FailPhone> failList = data.getFailList();
 
             // 调用接口成功，但是有发送失败的
