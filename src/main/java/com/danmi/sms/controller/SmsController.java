@@ -97,6 +97,10 @@ public class SmsController {
         smsResultList.forEach(i -> {
             // 获取批次号
             SendLog sendLog = sendLogService.getOne(Wrappers.<SendLog>lambdaQuery().select(SendLog::getBatch).eq(SendLog::getSmsId, i.getSmsId()));
+            if (ObjectUtils.isEmpty(sendLog)) {
+                log.info("smsId >>> {} 在当前库并未保存！", i.getSmsId());
+                return;
+            }
 
             // 根据批次号和手机号修改状态
             sendDetailsService.update(Wrappers.<SendDetails>lambdaUpdate().set(SendDetails::getStatus, i.getStatus())
