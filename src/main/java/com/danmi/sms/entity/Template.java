@@ -30,12 +30,21 @@ public class Template implements Serializable {
 
     private LocalDateTime ct;
 
+    /**
+     * 内容
+     */
     private String content;
-
+    /**
+     * 签名id
+     */
     private Integer sign;
-
+    /**
+     * 模板状态
+     */
     private String status;
-
+    /**
+     * 审批状态
+     */
     private String approveStatus;
 
 
