@@ -1,10 +1,24 @@
 package com.danmi.sms.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Reply;
+import com.danmi.sms.entity.Role;
+import com.danmi.sms.entity.User;
+import com.danmi.sms.entity.request.ReplyRequest;
 import com.danmi.sms.mapper.ReplyMapper;
 import com.danmi.sms.service.IReplyService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.danmi.sms.service.IRoleService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -17,4 +31,36 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements IReplyService {
 
+    @Resource
+    private IRoleService roleService;
+    @Resource
+    private ReplyMapper replyMapper;
+
+    @Override
+    public PageDTO<Reply> listReplyPage(ReplyRequest request, User loginUser) {
+        Integer pageNum = request.getPage();
+        Integer pageSize = request.getLimit();
+        if (pageSize==null || pageSize.equals(0)) {
+            pageSize = 10;
+        }
+        if (pageNum==null || pageNum.equals(0)) {
+            pageNum = 1;
+        }
+
+        Role role = roleService.getById(loginUser.getRoleId());
+        Boolean isSuperAdmin = "system_admin".equals(role.getCode());
+
+        IPage<Reply> page = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<Reply> wrapper = Wrappers.<Reply>lambdaQuery()
+                .like(StringUtils.isNotBlank(request.getPhone()), Reply::getPhone, request.getPhone());
+
+        IPage<Reply> data = replyMapper.selectPage(page, wrapper);
+        if (!isSuperAdmin) { // 不是超级管理员，只可以查看自己创建的人员
+            List<Reply> collect = data.getRecords().stream()
+//                    .filter(i -> i.getCa().substring(0, loginUser.getCode().length() + 1).equals(loginUser.getCode()))
+                    .collect(Collectors.toList());
+            data.setRecords(collect);
+        }
+        return new PageDTO<>(data);
+    }
 }

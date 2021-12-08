@@ -1,7 +1,10 @@
 package com.danmi.sms.service;
 
+import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Reply;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danmi.sms.entity.User;
+import com.danmi.sms.entity.request.ReplyRequest;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IReplyService extends IService<Reply> {
 
+    PageDTO<Reply> listReplyPage(ReplyRequest request, User loginUser);
 }
