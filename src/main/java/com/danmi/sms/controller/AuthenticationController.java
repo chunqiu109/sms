@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,7 +54,7 @@ public class AuthenticationController {
     private String uploadPath;
 
 
-    @PostMapping("certify")
+    @PostMapping(name = "certify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     @ApiOperation(value = "企业认证", notes = "企业认证")
     public Result<Object> addAuthentication(Authentication authentication, HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException {

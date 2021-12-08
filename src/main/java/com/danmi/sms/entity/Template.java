@@ -35,6 +35,10 @@ public class Template implements Serializable {
      */
     private String content;
     /**
+     * 名称
+     */
+    private String name;
+    /**
      * 签名id
      */
     private Integer sign;

@@ -35,12 +35,16 @@ public class TemplateController {
     @Autowired
     private ITemplateService templateService;
 
+    /**
+     * 添加模板
+     * @return
+     */
     @PostMapping("")
     @ResponseBody
     @ApiOperation(value = "添加模板", notes = "添加模板")
     public Result<Object> addRole(@RequestBody Template template, HttpServletRequest request) {
         // 判断必须参数
-        if (!StringUtils.hasLength(template.getContent()) || ObjectUtils.isEmpty(template.getSign())) {
+        if (!StringUtils.hasLength(template.getContent()) || !StringUtils.hasLength(template.getName()) || ObjectUtils.isEmpty(template.getSign())) {
             return Result.fail("必传参数不能为空！");
         }
 
@@ -63,6 +67,10 @@ public class TemplateController {
 
     }
 
+    /**
+     * 模板列表
+     * @return
+     */
     @GetMapping("list")
     @ResponseBody
     @ApiOperation(value = "模板列表", notes = "模板列表")
@@ -78,6 +86,10 @@ public class TemplateController {
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());
     }
 
+    /**
+     * 根据id获取模板
+     * @return
+     */
     @GetMapping("/{id}")
     @ResponseBody
     @ApiOperation(value = "根据id获取模板", notes = "根据id获取模板")
@@ -86,6 +98,10 @@ public class TemplateController {
         return Result.success(template);
     }
 
+    /**
+     * 根据id批量删除模板
+     * @return
+     */
     @DeleteMapping("/{ids}")
     @ResponseBody
     @ApiOperation(value = "根据id批量删除模板", notes = "根据id批量删除模板")
@@ -96,6 +112,10 @@ public class TemplateController {
         return Result.success("删除成功！");
     }
 
+    /**
+     * 根据id更新模板
+     * @return
+     */
     @PutMapping("")
     @ResponseBody
     @ApiOperation(value = "根据id更新模板", notes = "根据id更新模板")
@@ -111,6 +131,10 @@ public class TemplateController {
         }
     }
 
+    /**
+     * 系统管理员审核
+     * @return
+     */
     // @ todo 权限
     @PostMapping("approve")
     @ResponseBody
