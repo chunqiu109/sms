@@ -8,6 +8,7 @@ import com.danmi.sms.entity.request.SmsRequest;
 import com.danmi.sms.service.IReplyService;
 import com.danmi.sms.service.ISendDetailsService;
 import com.danmi.sms.service.ISendLogService;
+import com.danmi.sms.service.ISendStatusService;
 import com.danmi.sms.utils.DateUtils;
 import com.danmi.sms.vo.ReplyVO;
 import io.swagger.annotations.Api;
@@ -49,6 +50,9 @@ public class SmsController {
 
     @Autowired
     private IReplyService replyService;
+
+    @Autowired
+    private ISendStatusService sendStatusService;
 
 
     @PostMapping("/send")
@@ -93,6 +97,10 @@ public class SmsController {
     public RespCode status(@RequestBody SmsResult smsResult) {
         log.info("接收短信回执: {}", JSONObject.toJSONString(smsResult));
         List<SendStatus> smsResultList = smsResult.getSmsResult();
+
+        // 保存全量数据
+        sendStatusService.saveBatch(smsResultList);
+
         // 获取到了短信状态然后更新
         smsResultList.forEach(i -> {
             // 获取批次号
