@@ -191,7 +191,7 @@ public class DateUtils {
      *
      * @return String
      */
-    public static LocalDateTime localDateTimeToDate(Date date) {
+    public static LocalDateTime dateToLocalDateTime(Date date) {
         return date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
@@ -280,6 +280,16 @@ public class DateUtils {
         LocalDate startLocalDate = LocalDate.parse(startDate, dateTimeFormatter);
         LocalDate endLocalDate = LocalDate.parse(endDate, dateTimeFormatter);
         return ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
+    }
+
+    /**
+     * 时间戳转LocalDateTime
+     *
+     * @return long
+     */
+    public static LocalDateTime timestampToLocalDateTime(long timestamp) {
+        Date date = new Date(1638922332518l);
+        return dateToLocalDateTime(date);
     }
 
     /**

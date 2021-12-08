@@ -1,11 +1,15 @@
 package com.danmi.sms.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.entity.*;
 import com.danmi.sms.entity.request.SmsRequest;
+import com.danmi.sms.service.IReplyService;
 import com.danmi.sms.service.ISendDetailsService;
 import com.danmi.sms.service.ISendLogService;
+import com.danmi.sms.utils.DateUtils;
+import com.danmi.sms.vo.ReplyVO;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -43,6 +47,9 @@ public class SmsController {
     @Autowired
     private ISendLogService sendLogService;
 
+    @Autowired
+    private IReplyService replyService;
+
 
     @PostMapping("/send")
     public Result<Object> send(@RequestBody SmsRequest request, HttpServletRequest servletRequest) {
@@ -72,8 +79,9 @@ public class SmsController {
      * @return
      */
     @PostMapping("/reply")
-    public RespCode reply(@RequestBody Reply reply) {
+    public RespCode reply(@RequestBody ReplyVO reply) {
         log.info("接收用户回复: {}", JSONObject.toJSONString(reply));
+        replyService.save(new Reply().setReplyTime(DateUtils.timestampToLocalDateTime(reply.getTimestamp())).setPhone(reply.getPhone()).setReplyContent(reply.getContent()));
         return new RespCode().setRespCode("0000");
     }
 
@@ -82,8 +90,21 @@ public class SmsController {
      * @return
      */
     @PostMapping("/status")
-    public RespCode status(@RequestBody SendStatus status) {
-        log.info("接收短信回执: {}", JSONObject.toJSONString(status));
+    public RespCode status(@RequestBody SmsResult smsResult) {
+        log.info("接收短信回执: {}", JSONObject.toJSONString(smsResult));
+        List<SendStatus> smsResultList = smsResult.getSmsResult();
+        // 获取到了短信状态然后更新
+        smsResultList.forEach(i -> {
+            // 获取批次号
+            SendLog sendLog = sendLogService.getOne(Wrappers.<SendLog>lambdaQuery().select(SendLog::getBatch).eq(SendLog::getSmsId, i.getSmsId()));
+
+            // 根据批次号和手机号修改状态
+            sendDetailsService.update(Wrappers.<SendDetails>lambdaUpdate().set(SendDetails::getStatus, i.getStatus())
+                    .set(SendDetails::getMsg, i.getRespCode())
+                    .eq(SendDetails::getBatch, sendLog.getBatch())
+                    .eq(SendDetails::getPhone, i.getPhone()));
+        });
+
         return new RespCode().setRespCode("0000");
     }
 
