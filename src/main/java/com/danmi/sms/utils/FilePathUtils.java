@@ -1,5 +1,6 @@
 package com.danmi.sms.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.ResourceUtils;
@@ -7,10 +8,12 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 
+@Slf4j
 public class FilePathUtils {
 
     public static String getFilePath() throws IOException {
         String path = ResourceUtils.getURL("classpath:").getPath();
+        log.info("ResourceUtils.getURL >>> {}", path);
 
         // 如果是在eclipse中运行，则和target同级目录,如果是jar部署到服务器，则默认和jar包同级
         String pathStr = path.replace("/target/classes", "") + "authent_file";

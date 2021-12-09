@@ -54,13 +54,12 @@ public class AuthenticationController {
     private String uploadPath;
 
 
-    @PostMapping(name = "certify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "certify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     @ApiOperation(value = "企业认证", notes = "企业认证")
     public Result<Object> addAuthentication(Authentication authentication, HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException {
 //         判断必须参数
-        if (!StringUtils.hasLength(authentication.getCompany()) || !StringUtils.hasLength(authentication.getCertification())
-                || !StringUtils.hasLength(authentication.getLegalPerson()) || file.isEmpty()) {
+        if (!StringUtils.hasLength(authentication.getCompany()) || !StringUtils.hasLength(authentication.getLegalPerson()) || file.isEmpty()) {
             return Result.fail("必传参数不能为空！");
         }
 
@@ -86,10 +85,10 @@ public class AuthenticationController {
 
         //生成新文件名字
         String newFileName = System.currentTimeMillis() + "." + type;
-        // 封装上传文件位置的全路径en
+        // 封装上传文件位置的全路径
         File targetFile  = new File(pathStr,newFileName);
         //把本地文件上传到封装上传文件位置的全路径
-        file.transferTo(targetFile);
+        file.transferTo(targetFile.getAbsoluteFile());
 
         Object userInfo = request.getSession().getAttribute("userInfo");
         User loginUser;

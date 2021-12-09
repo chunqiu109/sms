@@ -44,7 +44,7 @@ public class MyWebConfig implements WebMvcConfigurer {
                 "/test",
                 "/error",
                 "/mobile/**",
-                "/resource/**",
+                "/upload/**",
                 "/"
         );
     }
@@ -58,7 +58,7 @@ public class MyWebConfig implements WebMvcConfigurer {
             e.printStackTrace();
         }
         log.info(" uploadPath >>>>>>>>>>>>>>>>>>>>" + filePath);
-        registry.addResourceHandler("/resource/**").addResourceLocations("file:" + filePath + "/");
+        registry.addResourceHandler("/upload/**").addResourceLocations("file:" + filePath + "/");
     }
 
 }
