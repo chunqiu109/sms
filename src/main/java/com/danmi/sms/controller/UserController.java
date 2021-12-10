@@ -136,6 +136,20 @@ public class UserController {
 
     }
 
+    @PostMapping("changePassword")
+    @ResponseBody
+    @ApiOperation(value = "用户添加", notes = "用户添加")
+    public Result<Object> changePassword(@RequestBody UserVo user) {
+        if (ObjectUtils.isEmpty(user.getId()) || StringUtils.isEmpty(user.getOldPassword()) || StringUtils.isEmpty(user.getPassword()) || StringUtils.isEmpty(user.getSecPassword())) {
+            return Result.fail("必填参数不能为空！");
+        }
+        if (!user.getPassword().equals(user.getSecPassword())) {
+            return Result.fail("两次密码输入不一致！");
+        }
+
+        return userService.changePassword(user);
+    }
+
     @PostMapping("")
     @ResponseBody
     @ApiOperation(value = "用户添加", notes = "用户添加")
@@ -182,7 +196,7 @@ public class UserController {
                 .setRoleId(2);
 
 
-        boolean flag = userService.saveUser(user);
+        boolean flag = userService.save(user);
         if (flag) {
             return Result.success("添加成功！");
         } else {

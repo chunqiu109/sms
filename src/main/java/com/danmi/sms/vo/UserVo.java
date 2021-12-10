@@ -12,8 +12,22 @@ import java.io.Serializable;
 public class UserVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 密码
+     */
     private String password;
 
+    private Integer id;
+
+    /**
+     * 旧密码
+     */
+    private String oldPassword;
+
+    /**
+     * 新密码
+     */
     private String secPassword;
 
     private String chName;

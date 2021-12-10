@@ -86,4 +86,12 @@ public class SMSUtils {
         params.add("sig", sig);
         return params;
     }
+
+    public static void main(String[] args) {
+        // 时间戳
+//        long timestamp = System.currentTimeMillis();
+        // 签名
+        String sig = DigestUtils.md5Hex(accountSid + authToken);
+        System.out.println(sig);
+    }
 }

@@ -20,6 +20,7 @@ import com.danmi.sms.vo.UserVo;
 import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,8 +129,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public boolean saveUser(User user) {
+    public Result<Object> changePassword(UserVo userVo) {
+        User user = getById(userVo.getId());
+        if (user == null) {
+            return Result.fail("没有此用户！");
+        }
 
-        return false;
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        // 参数1是请求密码，参数2是数据库中加密的值
+        boolean matches = passwordEncoder.matches(userVo.getOldPassword(), user.getPassword());
+        if (!matches) {
+            return Result.fail("原密码不正确！");
+        }
+        // 修改
+        updateById(new User().setPassword(userVo.getPassword()).setId(userVo.getId()));
+        return Result.success();
     }
 }

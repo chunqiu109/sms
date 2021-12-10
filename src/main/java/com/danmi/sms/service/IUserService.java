@@ -23,5 +23,5 @@ public interface IUserService extends IService<User> {
 
     Result register(UserVo user);
 
-    boolean saveUser(User user);
+    Result<Object> changePassword(UserVo user);
 }
