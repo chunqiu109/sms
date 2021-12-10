@@ -59,7 +59,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
         IPage<Role> data = roleMapper.selectPage(page, wrapper);
         if (!isSuperAdmin) { // 不是超级管理员，只可以查看自己创建的人员
-            List<Role> collect = data.getRecords().stream().filter(i -> i.getCa().substring(0, loginUser.getCode().length() + 1).equals(loginUser.getCode())).collect(Collectors.toList());
+            List<Role> collect = data.getRecords().stream().filter(i -> i.getCa().substring(0, loginUser.getCode().length()).equals(loginUser.getCode())).collect(Collectors.toList());
             data.setRecords(collect);
         }
         return new PageDTO<>(data);

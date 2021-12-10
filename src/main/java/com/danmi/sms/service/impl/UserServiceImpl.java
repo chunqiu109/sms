@@ -48,7 +48,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private IMenuService menuService;
 
     @Value("${role.digit:5}")
-    private static Integer roleDigit;
+    private Integer roleDigit;
 
     @Override
     public User login(User user) {
@@ -79,7 +79,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         IPage<User> data = userMapper.selectPage(page, wrapper);
 
         if (!isSuperAdmin) { // 不是超级管理员，只可以查看自己创建的人员
-            List<User> collect = data.getRecords().stream().filter(i -> i.getCode().substring(0, loginUser.getCode().length() + 1).equals(loginUser.getCode())).collect(Collectors.toList());
+            List<User> collect = data.getRecords().stream().filter(i -> i.getCode().substring(0, loginUser.getCode().length()).equals(loginUser.getCode())).collect(Collectors.toList());
             data.setRecords(collect);
         }
 
@@ -141,8 +141,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (!matches) {
             return Result.fail("原密码不正确！");
         }
+
+        String encodePassword = passwordEncoder.encode(userVo.getPassword());
         // 修改
-        updateById(new User().setPassword(userVo.getPassword()).setId(userVo.getId()));
+        updateById(new User().setPassword(encodePassword).setId(userVo.getId()));
         return Result.success();
     }
 }

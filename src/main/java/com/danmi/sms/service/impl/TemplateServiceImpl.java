@@ -59,7 +59,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         IPage<Template> data = templateMapper.selectPage(page, wrapper);
 
         if (!isSuperAdmin) { // 不是超级管理员，只可以查看自己创建的人员
-            List<Template> collect = data.getRecords().stream().filter(i -> i.getCa().substring(0, loginUser.getCode().length() + 1).equals(loginUser.getCode())).collect(Collectors.toList());
+            List<Template> collect = data.getRecords().stream().filter(i -> i.getCa().substring(0, loginUser.getCode().length()).equals(loginUser.getCode())).collect(Collectors.toList());
             data.setRecords(collect);
         }
         return new PageDTO<>(data);
