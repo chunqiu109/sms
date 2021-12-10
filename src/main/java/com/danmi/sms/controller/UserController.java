@@ -3,6 +3,7 @@ package com.danmi.sms.controller;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.danmi.sms.utils.PhoneUtil;
 import com.danmi.sms.utils.UserCodeUtil;
+import com.danmi.sms.utils.UserUtils;
 import com.danmi.sms.vo.UserVo;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
@@ -38,6 +39,8 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private IUserService userService;
+    @Autowired
+    private UserUtils userUtils;
     @Autowired
     private HttpServletRequest httpServletRequest;
     @Autowired
@@ -138,9 +141,15 @@ public class UserController {
 
     @PostMapping("changePassword")
     @ResponseBody
-    @ApiOperation(value = "用户添加", notes = "用户添加")
+    @ApiOperation(value = "修改密码", notes = "修改密码")
     public Result<Object> changePassword(@RequestBody UserVo user) {
-        if (ObjectUtils.isEmpty(user.getId()) || StringUtils.isEmpty(user.getOldPassword()) || StringUtils.isEmpty(user.getPassword()) || StringUtils.isEmpty(user.getSecPassword())) {
+        User loginUser = userUtils.getUser();
+        user.setId(loginUser.getId());
+        if (ObjectUtils.isEmpty(loginUser)) {
+            return Result.fail("用户尚未登录！");
+        }
+
+        if (StringUtils.isEmpty(user.getOldPassword()) || StringUtils.isEmpty(user.getPassword()) || StringUtils.isEmpty(user.getSecPassword())) {
             return Result.fail("必填参数不能为空！");
         }
         if (!user.getPassword().equals(user.getSecPassword())) {
