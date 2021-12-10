@@ -86,7 +86,7 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
 
         IPage<SendLog> data = sendLogMapper.selectPage(page, wrapper);
         User user = userUtils.getUser();
-        List<SendLog> collect = data.getRecords().stream().filter(i -> i.getCa().substring(0, user.getCode().length() + 1).equals(user.getCode())).collect(Collectors.toList());
+        List<SendLog> collect = data.getRecords().stream().filter(i -> i.getCa().startsWith(user.getCode())).collect(Collectors.toList());
         collect.stream().forEach(i -> {
             int count = sendDetailsService.count(Wrappers.<SendDetails>lambdaQuery().eq(SendDetails::getBatch, i.getBatch()));
 

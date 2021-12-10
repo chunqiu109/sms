@@ -60,7 +60,7 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
 
         // 过滤当前登录人自己创建的
         if (!userUtils.isSystemAdmin()) {
-            list = list.stream().filter(i -> i.getCa().substring(0, user.getCode().length() + 1).equals(user.getCode())).collect(Collectors.toList());
+            list = list.stream().filter(i -> i.getCa().startsWith(user.getCode())).collect(Collectors.toList());
         }
 
         return list;

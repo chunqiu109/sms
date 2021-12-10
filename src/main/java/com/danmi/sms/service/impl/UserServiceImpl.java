@@ -79,7 +79,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         IPage<User> data = userMapper.selectPage(page, wrapper);
 
         if (!isSuperAdmin) { // 不是超级管理员，只可以查看自己创建的人员
-            List<User> collect = data.getRecords().stream().filter(i -> i.getCode().substring(0, loginUser.getCode().length()).equals(loginUser.getCode())).collect(Collectors.toList());
+            List<User> collect = data.getRecords().stream().filter(i -> i.getCode().startsWith(loginUser.getCode())).collect(Collectors.toList());
             data.setRecords(collect);
         }
 

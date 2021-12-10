@@ -187,7 +187,7 @@ public class UserController {
         String parentCode = loginUser.getCode();
         // userCode 查询自己下边有没有新建的用户，有的话就在之上加1，没有拼接
         List<User> list = userService.list();
-        List<User> list1 = list.stream().filter(i -> i.getCode().substring(0, parentCode.length() + 1).equals(parentCode)).map(i -> i.setIntegerCode(Integer.valueOf(i.getCode()))).collect(Collectors.toList());
+        List<User> list1 = list.stream().filter(i -> i.getCode().startsWith(parentCode)).map(i -> i.setIntegerCode(Integer.valueOf(i.getCode()))).collect(Collectors.toList());
 
         if (ObjectUtils.isNotEmpty(list1) && list1.size()!=0){
             list1.sort((a , b) -> b.getIntegerCode()-a.getIntegerCode());
