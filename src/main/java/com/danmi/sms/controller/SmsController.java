@@ -63,7 +63,7 @@ public class SmsController {
             return Result.fail("您尚未登录！");
         }
 
-        if (ObjectUtils.isEmpty(request.getType()) || StringUtils.isEmpty(request.getContent())) {
+        if (ObjectUtils.isEmpty(request.getType()) || StringUtils.isEmpty(request.getContent())| StringUtils.isEmpty(request.getBatchNO())) {
             return Result.fail("类型或者内容不能为空！");
         }
 
