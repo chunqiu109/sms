@@ -16,7 +16,9 @@
 	<description>sms</description>
 	<properties>
 		<java.version>1.8</java.version>
+		<log4j2.version>2.15.0</log4j2.version>
 	</properties>
+
 
 	<dependencies>
 		<!-- Nacos 组件依赖 -->
