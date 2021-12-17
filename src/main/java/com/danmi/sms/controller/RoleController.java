@@ -8,6 +8,7 @@ import com.danmi.sms.entity.Role;
 import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.RoleRequest;
 import com.danmi.sms.service.IRoleService;
+import com.danmi.sms.utils.UserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 角色
@@ -34,6 +36,8 @@ public class RoleController {
     
     @Autowired
     private IRoleService roleService;
+    @Autowired
+    private UserUtils userUtils;
 
     @GetMapping("/list")
     @ResponseBody
@@ -48,6 +52,20 @@ public class RoleController {
         User loginUser = (User) userInfo;
         PageDTO<Role> rolePageDTO = roleService.listRolePage(role, loginUser);
         return Result.success(rolePageDTO.getRecords(), rolePageDTO.getTotal());
+    }
+
+    /**
+     * 获取当前登录人所创建的角色
+     * @return
+     */
+    @GetMapping("/list-cur-user")
+    @ResponseBody
+    @ApiOperation(value = "获取当前登录人所创建的角色", notes = "获取当前登录人所创建的角色")
+    public Result<Object> getCurRoleList() {
+
+        User loginUser = userUtils.getUser();
+        List<Role> roles = roleService.list().stream().filter(i -> i.getCa().startsWith(loginUser.getCode())).collect(Collectors.toList());
+        return Result.success(roles);
     }
 
     @GetMapping("/{id}")

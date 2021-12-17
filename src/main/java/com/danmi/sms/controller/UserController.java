@@ -197,12 +197,12 @@ public class UserController {
             user.setCode(parentCode+ UserCodeUtil.generateRegisterCode());
         }
 
-
-
         user.setPassword(encodePassword)
                 .setCt(LocalDateTime.now())
-                .setGrade(user.getCode().length()/roleDigit)
-                .setRoleId(2);
+//                .setRoleId(2) // 不设置角色，在用户授权的时候再添加角色！
+                .setGrade(user.getCode().length()/roleDigit);
+
+
 
 
         boolean flag = userService.save(user);
