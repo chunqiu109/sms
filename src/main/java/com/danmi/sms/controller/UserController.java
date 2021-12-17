@@ -46,7 +46,7 @@ public class UserController {
     @Autowired
     private IRoleService roleService;
     @Value("${role.digit:5}")
-    private static Integer roleDigit;
+    private Integer roleDigit;
 
 
 //    @todo 权限问题
@@ -186,7 +186,7 @@ public class UserController {
         // 生成userCode
         String parentCode = loginUser.getCode();
         // userCode 查询自己下边有没有新建的用户，有的话就在之上加1，没有拼接
-        List<User> list = userService.list();
+        List<User> list = userService.list(Wrappers.<User>lambdaQuery().ne(User::getCode, parentCode));
         List<User> list1 = list.stream().filter(i -> i.getCode().startsWith(parentCode)).map(i -> i.setIntegerCode(Integer.valueOf(i.getCode()))).collect(Collectors.toList());
 
         if (ObjectUtils.isNotEmpty(list1) && list1.size()!=0){
