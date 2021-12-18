@@ -13,6 +13,7 @@ import  com.danmi.sms.mapper.RoleMapper;
 import com.danmi.sms.service.IMenuService;
 import  com.danmi.sms.service.IRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -78,5 +80,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         }
 
         return menuService.findTree(list, option);
+    }
+
+    @Override
+    public Role getDetail(Integer id) {
+        Role role = getById(id);
+        List<String> menuNames = getMenuList(id).stream().map(Menu::getName).collect(Collectors.toList());
+        role.setMenuNames(Joiner.on(",").join(menuNames));
+        return role;
     }
 }

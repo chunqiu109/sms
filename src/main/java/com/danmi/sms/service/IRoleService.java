@@ -22,4 +22,6 @@ public interface IRoleService extends IService<Role> {
     PageDTO<Role> listRolePage(RoleRequest role, User loginUser);
 
     List<Menu> getMenuList(Integer roleId);
+
+    Role getDetail(Integer id);
 }

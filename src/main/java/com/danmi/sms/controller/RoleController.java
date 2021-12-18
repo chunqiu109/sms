@@ -72,7 +72,7 @@ public class RoleController {
     @ResponseBody
     @ApiOperation(value = "根据id获取角色", notes = "根据id获取角色")
     public Result<Object> getById(@PathVariable(value = "id") Integer id) {
-        Role role = roleService.getById(id);
+        Role role = roleService.getDetail(id);
         return Result.success(role);
     }
 
