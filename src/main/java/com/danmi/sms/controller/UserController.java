@@ -253,7 +253,7 @@ public class UserController {
     @PostMapping("/userAddRole")
     @ResponseBody
     @ApiOperation(value = "给用户添加角色", notes = "给用户添加角色")
-    public Result<Object> userAddRole(User user) {
+    public Result<Object> userAddRole(@RequestBody User user) {
         if (ObjectUtils.isEmpty(user.getRoleId()) || ObjectUtils.isEmpty(user.getId())) {
             return Result.fail("必传参数不可为空！");
         }

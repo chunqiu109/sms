@@ -51,5 +51,10 @@ public class Template implements Serializable {
      */
     private String approveStatus;
 
+    /**
+     * 拒绝原因
+     */
+    private String rejectReason;
+
 
 }

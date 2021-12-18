@@ -65,7 +65,7 @@ public class RoleController {
     public Result<Object> getCurRoleList(String roleName) {
 
         User loginUser = userUtils.getUser();
-        List<Role> roles = roleService.list(Wrappers.<Role>lambdaQuery().like(Role::getName, roleName))
+        List<Role> roles = roleService.list(Wrappers.<Role>lambdaQuery().like(StringUtils.hasLength(roleName), Role::getName, roleName))
                 .stream().filter(i -> i.getCa().startsWith(loginUser.getCode())).collect(Collectors.toList());
         return Result.success(roles);
     }

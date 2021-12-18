@@ -52,7 +52,10 @@ public class Authentication implements Serializable {
 
     private String approveStatus;
 
-
+    /**
+     * 拒绝原因
+     */
+    private String rejectReason;
 
 
 }

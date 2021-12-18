@@ -35,6 +35,10 @@ public class Sign implements Serializable {
     private String status;
 
     private String approveStatus;
+    /**
+     * 拒绝原因
+     */
+    private String rejectReason;
 
 
 }
