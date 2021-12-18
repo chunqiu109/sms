@@ -1,6 +1,7 @@
 package com.danmi.sms.controller;
 
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Menu;
@@ -61,10 +62,11 @@ public class RoleController {
     @GetMapping("/list-cur-user")
     @ResponseBody
     @ApiOperation(value = "获取当前登录人所创建的角色", notes = "获取当前登录人所创建的角色")
-    public Result<Object> getCurRoleList() {
+    public Result<Object> getCurRoleList(String roleName) {
 
         User loginUser = userUtils.getUser();
-        List<Role> roles = roleService.list().stream().filter(i -> i.getCa().startsWith(loginUser.getCode())).collect(Collectors.toList());
+        List<Role> roles = roleService.list(Wrappers.<Role>lambdaQuery().like(Role::getName, roleName))
+                .stream().filter(i -> i.getCa().startsWith(loginUser.getCode())).collect(Collectors.toList());
         return Result.success(roles);
     }
 
