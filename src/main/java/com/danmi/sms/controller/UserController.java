@@ -1,6 +1,7 @@
 package com.danmi.sms.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.danmi.sms.entity.AuthList;
 import com.danmi.sms.utils.PhoneUtil;
 import com.danmi.sms.utils.UserCodeUtil;
 import com.danmi.sms.utils.UserUtils;
@@ -265,6 +266,30 @@ public class UserController {
             return Result.fail("授权失败！");
         }
 
+    }
+
+    /**
+     * 根据菜单id查看当前登录人有没有查看和修改权限
+     * @return
+     */
+    @GetMapping("/get-auth-by-menuId")
+    @ResponseBody
+    @ApiOperation(value = "根据菜单id查看当前登录人有没有查看和修改权限", notes = "根据菜单id查看当前登录人有没有查看和修改权限")
+    public Result<Object> getAuthByMenuId(Integer menuId) {
+        if (ObjectUtils.isEmpty(menuId)) {
+            return Result.fail("必传参数不可为空！");
+        }
+
+        User user = userUtils.getUser();
+        if (ObjectUtils.isEmpty(user)) {
+            return Result.fail("用户未登录！");
+        }
+
+        AuthList authList = userService.getAuthByMenuId(menuId, user);
+        if (ObjectUtils.isEmpty(authList)) {
+            return Result.fail("当前id未查询出菜单！");
+        }
+        return Result.success(authList);
     }
 
 

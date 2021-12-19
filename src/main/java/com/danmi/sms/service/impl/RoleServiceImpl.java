@@ -85,6 +85,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public Role getDetail(Integer id) {
         Role role = getById(id);
+        // @todo 应该循环菜单列表全部
         List<String> menuNames = getMenuList(id).stream().map(Menu::getName).collect(Collectors.toList());
         role.setMenuNames(Joiner.on(",").join(menuNames));
         return role;

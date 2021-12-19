@@ -2,6 +2,7 @@ package com.danmi.sms.service;
 
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
+import com.danmi.sms.entity.AuthList;
 import  com.danmi.sms.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danmi.sms.entity.request.UserRequest;
@@ -24,4 +25,6 @@ public interface IUserService extends IService<User> {
     Result register(UserVo user);
 
     Result<Object> changePassword(UserVo user);
+
+    AuthList getAuthByMenuId(Integer menuId, User user);
 }

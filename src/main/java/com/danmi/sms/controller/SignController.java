@@ -4,10 +4,12 @@ package com.danmi.sms.controller;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
 import com.danmi.sms.entity.Sign;
+import com.danmi.sms.entity.Template;
 import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.SignRequest;
 import com.danmi.sms.enums.SignApproveStatusEnum;
 import com.danmi.sms.enums.SignStatusEnum;
+import com.danmi.sms.enums.TemplateApproveStatusEnum;
 import com.danmi.sms.service.ISignService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -124,6 +126,12 @@ public class SignController {
         if (ObjectUtils.isEmpty(sign.getId()) || ObjectUtils.isEmpty(sign.getApproveStatus())) {
             return Result.fail("必传参数不能为空！");
         }
+
+        Sign sign1 = signService.getById(sign.getId());
+        if (!TemplateApproveStatusEnum.UN_APPROVE.getStatus().equals(sign1.getApproveStatus())) {
+            return Result.fail("已审批的模板不可修改！");
+        }
+
         boolean flag = signService.updateById(sign);
         if (flag) {
             return Result.success("审核成功！");

@@ -123,6 +123,12 @@ public class TemplateController {
         if (ObjectUtils.isEmpty(template.getId())) {
             return Result.fail("必传参数不能为空！");
         }
+
+        Template template1 = templateService.getById(template.getId());
+        if (!TemplateApproveStatusEnum.UN_APPROVE.getStatus().equals(template1.getApproveStatus())) {
+            return Result.fail("已审批的模板不可修改！");
+        }
+
         boolean flag = templateService.updateById(template);
         if (flag) {
             return Result.success("修改成功！");

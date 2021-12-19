@@ -2,11 +2,14 @@ package com.danmi.sms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.danmi.sms.common.constants.MyConstants;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
+import com.danmi.sms.entity.AuthList;
+import com.danmi.sms.entity.Menu;
 import com.danmi.sms.entity.Role;
 import  com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.UserRequest;
@@ -16,6 +19,7 @@ import com.danmi.sms.service.IRoleService;
 import  com.danmi.sms.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danmi.sms.utils.UserCodeUtil;
+import com.danmi.sms.utils.UserUtils;
 import com.danmi.sms.vo.UserVo;
 import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +50,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private IRoleService roleService;
     @Resource
     private IMenuService menuService;
+    @Resource
+    private UserUtils userUtils;
 
     @Value("${role.digit:5}")
     private Integer roleDigit;
@@ -146,5 +152,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 修改
         updateById(new User().setPassword(encodePassword).setId(userVo.getId()));
         return Result.success();
+    }
+
+    @Override
+    public AuthList getAuthByMenuId(Integer menuId, User user) {
+
+        AuthList authList = new AuthList();
+        authList.setQuery(false);
+        authList.setExport(false);
+        authList.setOption(false);
+        // 获取不属于菜单的菜单列表
+        List<Menu> menus = menuService.getAuthById(menuId);
+
+        if (ObjectUtils.isEmpty(menus) || menus.size() == 0) {
+            return null;
+        }
+
+        Role role = roleService.getById(user.getRoleId());
+
+        String menuIdsStr = role.getMenu();
+        menus.forEach(i -> {
+            boolean flag = menuIdsStr.contains(String.valueOf(i.getId()));
+            if (flag) {
+                if ("query".equals(i.getCode())) {
+                    authList.setQuery(true);
+                } else if ("option".equals(i.getCode())) {
+                    authList.setOption(true);
+                } else if ("export".equals(i.getCode())) {
+                    authList.setExport(true);
+                }
+            }
+        });
+
+        return authList;
+
+//        Boolean isSuperAdmin = "system_admin".equals(role.getCode());
     }
 }

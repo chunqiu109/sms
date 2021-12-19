@@ -1,11 +1,19 @@
 package com.danmi.sms.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danmi.sms.entity.Menu;
+import com.danmi.sms.entity.User;
 import com.danmi.sms.mapper.MenuMapper;
 import com.danmi.sms.service.IMenuService;
+import com.danmi.sms.utils.UserUtils;
+import com.google.common.collect.Lists;
+import io.swagger.models.auth.In;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Wrapper;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,7 +27,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IMenuService {
-
 
     /**
      *
@@ -61,6 +68,73 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
          */
 
         return rootMenu;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<Menu> findTreeById(Integer id) {
+
+        List<Menu> menus = list(Wrappers.<Menu>lambdaQuery().eq(Menu::getId, id).ne(Menu::getParentId, 0));
+
+        if (ObjectUtils.isEmpty(menus) || menus.size() == 0) {
+            return null;
+        }
+
+        for (Menu nav : menus) {
+            /* 获取根节点下的所有子节点 使用getChild方法*/
+            List<Menu> childList = getChildSign(nav);
+            nav.setChildren(childList);//给根节点设置子节点
+        }
+
+
+        return menus;
+    }
+
+
+    /**
+     * 获取子节点
+     *
+     * @return 每个根节点下，所有子菜单列表
+     */
+    public List<Menu> getChildSign(Menu menu) {
+        List<Menu> childList = list(Wrappers.<Menu>lambdaQuery().eq(Menu::getParentId, menu.getId()));
+
+        //递归
+        for (Menu nav : childList) {
+            nav.setChildren(getChildSign(nav));
+        }
+        Collections.sort(childList, order()); //排序
+        //如果节点下没有子节点，返回一个空List（递归退出）
+        if (childList.size() == 0) {
+            return new ArrayList<Menu>();
+        }
+
+        return childList;
+    }
+
+    @Override
+    public List<Menu> getAuthById(Integer id) {
+        List<Menu> treeById = findTreeById(id);
+        if (ObjectUtils.isEmpty(treeById) || treeById.size() == 0) {
+            return null;
+        }
+        Menu menu = findTreeById(id).get(0);
+
+
+        List<Menu> menus = Lists.newArrayList();
+
+            List<Menu> children = menu.getChildren();
+            List<Menu> collect = children.stream()
+                    .filter(i -> !i.getParentId().equals(0) && i.getIsMenu() != null && i.getIsMenu().equals(0))
+                    .collect(Collectors.toList());
+            if (collect != null && collect.size() != 0) {
+                menus.addAll(collect);
+            }
+
+
+       return menus;
     }
 
 
