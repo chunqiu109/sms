@@ -10,7 +10,9 @@ import com.danmi.sms.service.ISendDetailsService;
 import com.danmi.sms.service.ISendLogService;
 import com.danmi.sms.service.ISendStatusService;
 import com.danmi.sms.utils.DateUtils;
+import com.danmi.sms.utils.UserUtils;
 import com.danmi.sms.vo.ReplyVO;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -23,7 +25,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 短信服务
@@ -53,6 +58,9 @@ public class SmsController {
 
     @Autowired
     private ISendStatusService sendStatusService;
+
+    @Autowired
+    private UserUtils userUtils;
 
 
     @PostMapping("/send")
@@ -85,7 +93,39 @@ public class SmsController {
     @PostMapping("/reply")
     public RespCode reply(@RequestBody ReplyVO reply) {
         log.info("接收用户回复: {}", JSONObject.toJSONString(reply));
-        replyService.save(new Reply().setReplyTime(DateUtils.timestampToLocalDateTime(reply.getTimestamp())).setPhone(reply.getPhone()).setReplyContent(reply.getContent()));
+//        当天发送给回复用户的手机号，当天超过3个企业发送的就取当天的，如果小于3个，就按时间倒序排序选择前三条数据，
+//        用户只回复一次，但是记录企业的个数条数。是否排除数据？
+
+        String todayDate = DateUtils.localDateToString(LocalDate.now());
+        // 查询当天发送详情中给此手机号发送的企业
+        String phone = reply.getPhone();
+        List<SendDetails> sendDetails = sendDetailsService.list(Wrappers.<SendDetails>lambdaQuery().eq(SendDetails::getPhone, phone).orderByDesc(SendDetails::getCt));
+
+        List<SendDetails> todaySendDetails = sendDetails.stream()
+                .filter(i -> DateUtils.localDateTimeToString(i.getCt()).substring(0, 10).equals(todayDate))
+                .collect(Collectors.toList());
+
+        List<SendDetails> result =  Lists.newArrayList();
+        List<Reply> replies = Lists.newArrayList();
+
+        // 大于等于3就取当天的企业并保存
+        if (!ObjectUtils.isEmpty(todaySendDetails)) {
+            if (todaySendDetails.size() >= 3) {
+                result = todaySendDetails;
+            } else { // 如果小于3个，就按时间倒序排序选择前三条数据并保存
+                result = sendDetails.subList(0, 3);
+            }
+        }
+
+        result.stream().forEach(i -> {
+            replies.add(new Reply()
+                    .setReplyTime(DateUtils.timestampToLocalDateTime(reply.getTimestamp()))
+                    .setPhone(phone)
+                    .setCa(i.getCa())
+                    .setReplyContent(reply.getContent()));
+        });
+
+        replyService.saveBatch(replies);
         return new RespCode().setRespCode("0000");
     }
 
@@ -129,8 +169,11 @@ public class SmsController {
         if (!((!ObjectUtils.isEmpty(file) && !file.isEmpty()) || (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty()))) {
             return Result.fail("请先上传文件或者手动输入手机号！");
         }
-
-        Result result = sendDetailsService.phoneImport(file, request);
+        User user = userUtils.getUser();
+        if (ObjectUtils.isEmpty(user)) {
+            return Result.fail("请先登录！");
+        }
+        Result result = sendDetailsService.phoneImport(file, request, user);
 
         return result;
 

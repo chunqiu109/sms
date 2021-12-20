@@ -48,7 +48,7 @@ public class TransmissionSms {
                 List<String> phones = sendDetailsList.stream().map(m -> m.getPhone()).collect(Collectors.toList());
                 Map<String, Integer> maps = sendDetailsList.stream().collect(Collectors.toMap(SendDetails::getPhone, SendDetails::getId, (key1, key2) -> key2));
                 SmsRequest smsRequest = new SmsRequest().setBatchNO(i.getBatch()).setContent(i.getContent()).setType(i.getType());
-                User user = new User().setCode("system");
+                User user = new User().setCode(i.getCa());
                 sendLogService.sendAndProcessService(i.getSendTime(), smsRequest, user, phones, maps, i.getId());
             });
         }

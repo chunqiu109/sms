@@ -72,7 +72,7 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
     }
 
     @Override
-    public Result phoneImport(MultipartFile file, SmsRequest request) throws IOException {
+    public Result phoneImport(MultipartFile file, SmsRequest request, User user) throws IOException {
 
 //        if (!((!ObjectUtils.isEmpty(file) && !file.isEmpty()) || (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty())))
         List<String> phones = Lists.newArrayList();
@@ -116,7 +116,7 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
                 .setSuccessNum((int) successNum)
                 .setBatch(batch);
 
-        User user = userUtils.getUser();
+
 
         List<String> successList = phones.stream().filter(i -> PhoneUtil.checkPhone(i)).distinct().collect(Collectors.toList());
 

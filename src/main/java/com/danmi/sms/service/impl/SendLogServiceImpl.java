@@ -6,24 +6,24 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.dto.PageDTO;
-import com.danmi.sms.entity.FailPhone;
-import com.danmi.sms.entity.SendDetails;
-import com.danmi.sms.entity.SendLog;
-import com.danmi.sms.entity.User;
+import com.danmi.sms.entity.*;
 import com.danmi.sms.entity.request.SendDetailRequest;
 import com.danmi.sms.entity.request.SendLogRequest;
 import com.danmi.sms.entity.request.SmsRequest;
 import com.danmi.sms.entity.response.SmsResponse;
 import com.danmi.sms.enums.SmsSendStatusEnum;
 import com.danmi.sms.mapper.SendLogMapper;
+import com.danmi.sms.service.IReplyService;
 import com.danmi.sms.service.ISendDetailsService;
 import com.danmi.sms.service.ISendLogService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danmi.sms.utils.BigDecimalUtil;
+import com.danmi.sms.utils.DateUtils;
 import com.danmi.sms.utils.SMSUtils;
 import com.danmi.sms.utils.UserUtils;
 import com.danmi.sms.vo.SendDetailsVO;
 import com.danmi.sms.vo.SendLogFailVO;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -57,6 +58,8 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
     private ISendDetailsService sendDetailsService;
     @Autowired
     private UserUtils userUtils;
+    @Autowired
+    private IReplyService replyService;
 
     @Override
     public PageDTO<SendLog> general(SendLogRequest request) {
@@ -174,7 +177,7 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
 
         String sendTime;
         if (request.getType().equals(1)) { // 立即发送
-            sendTime = "now";
+            sendTime = DateUtils.localDateToString(LocalDate.now());
             Result result = sendAndProcessService(sendTime, request, loginUser, phones, maps,null);
             return result;
 
@@ -207,6 +210,56 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
         String batchNO = request.getBatchNO();
 
         List<SendDetails> sendDetails = Lists.newArrayList();
+
+        // @todo
+        //  同一天同一个模板给同一个手机号发送只发送一次短信，但是有多少个企业就在数据库记录多少条。
+        //  当有企业在用户回复之后再发送，也要给此企业记录回复数据。
+
+        String todayDate = DateUtils.localDateToString(LocalDate.now());
+        String join = Joiner.on(",").join(phones);
+
+        // 拿到今天所有的回复的内容
+        List<Reply> replyList = replyService.list().stream()
+                .filter(i -> DateUtils.localDateTimeToString(i.getReplyTime()).substring(0, 10).equals(todayDate))
+                .collect(Collectors.toList());
+
+        List<Reply> replies = Lists.newArrayList();
+        replyList.forEach(i -> {
+            if (join.contains(i.getPhone())) {
+                i.setCa(loginUser.getCa());
+                replies.add(i);
+            }
+        });
+
+        replyService.saveBatch(replies);
+
+
+        // 查找同一天相同模板的所有已经发送的手机号
+        List<String> batchs = list(Wrappers.<SendLog>lambdaQuery().eq(SendLog::getContent, content)).stream()
+                .filter(i -> i.getSendTime().substring(0, 10).equals(todayDate))
+                .filter(i -> DateUtils.stringToTimestamp(i.getSendTime()) <= DateUtils.localDateTimeToTimestamp(LocalDateTime.now()))
+                .map(i -> i.getBatch())
+                .collect(Collectors.toList());
+
+        List<String> sendedPhones = sendDetailsService.list(Wrappers.<SendDetails>lambdaQuery().in(SendDetails::getBatch, batchs))
+                .stream().map(i -> i.getPhone()).distinct().collect(Collectors.toList());
+
+
+
+
+        // 保存已经发送的手机号和将要发送的手机号相同的数据集合对象
+        List<String> removeList = Lists.newArrayList();
+        sendedPhones.forEach(i -> {
+            if (join.contains(i)) {
+                // 把将要发送的手机号和上边的手机号已经存在的剔除
+                removeList.add(i);
+                phones.remove(i);
+            }
+        });
+
+
+
+
 
         ResponseEntity<SmsResponse> send = SMSUtils.send(phones, content);
         if (send.getStatusCodeValue() != 200) {
@@ -244,6 +297,12 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
 
             // 所有错误的数据已经清除，保存正确的数据
             phones.forEach(i -> {
+                Integer id = maps.get(i);
+                sendDetails.add(new SendDetails().setId(id).setBatch(batchNO).setPhone(i)
+                        .setStatus("success").setMsg("发送成功").setCa(loginUser.getCode()).setCt(LocalDateTime.now()));
+            });
+            // 当天重复发送的数据也要保存
+            removeList.forEach(i -> {
                 Integer id = maps.get(i);
                 sendDetails.add(new SendDetails().setId(id).setBatch(batchNO).setPhone(i)
                         .setStatus("success").setMsg("发送成功").setCa(loginUser.getCode()).setCt(LocalDateTime.now()));

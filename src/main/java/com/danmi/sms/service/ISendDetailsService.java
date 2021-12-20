@@ -3,6 +3,7 @@ package com.danmi.sms.service;
 import com.danmi.sms.common.vo.Result;
 import com.danmi.sms.entity.SendDetails;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danmi.sms.entity.User;
 import com.danmi.sms.entity.request.SendDetailRequest;
 import com.danmi.sms.entity.request.SmsRequest;
 import com.danmi.sms.vo.SendDetailsVO;
@@ -25,5 +26,5 @@ public interface ISendDetailsService extends IService<SendDetails> {
 
     List<SendDetailsVO> replyRecord(SendDetailRequest request);
 
-    Result phoneImport(MultipartFile file, SmsRequest request) throws IOException;
+    Result phoneImport(MultipartFile file, SmsRequest request, User user) throws IOException;
 }
