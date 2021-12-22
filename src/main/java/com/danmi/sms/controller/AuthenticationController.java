@@ -12,6 +12,7 @@ import com.danmi.sms.enums.AuthenticationApproveStatusEnum;
 import com.danmi.sms.service.IAuthenticationService;
 import com.danmi.sms.service.IRoleService;
 import com.danmi.sms.utils.FilePathUtils;
+import com.danmi.sms.utils.UserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -32,9 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
- *  认证管理
- *
+ * 认证管理
  *
  * @author chunqiu
  * @since 2021-11-28
@@ -49,6 +48,8 @@ public class AuthenticationController {
     private IAuthenticationService authenticationService;
     @Autowired
     private IRoleService roleService;
+    @Autowired
+    private UserUtils userUtils;
     @Value("${authent.file.path}")
     private String uploadPath;
 
@@ -57,7 +58,13 @@ public class AuthenticationController {
     @ResponseBody
     @ApiOperation(value = "企业认证", notes = "企业认证")
     public Result<Object> addAuthentication(Authentication authentication, HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException {
-//         判断必须参数
+
+        User loginUser = userUtils.getUser();
+        if (ObjectUtils.isEmpty(loginUser)) {
+            return Result.fail("用户未登录！");
+        }
+
+        //         判断必须参数
         if (!StringUtils.hasLength(authentication.getCompany()) || !StringUtils.hasLength(authentication.getLegalPerson()) || file.isEmpty()) {
             return Result.fail("必传参数不能为空！");
         }
@@ -66,52 +73,54 @@ public class AuthenticationController {
             return Result.fail("请上传文件！");
         }
 
+        List<Authentication> authentications = authenticationService.list(Wrappers.<Authentication>lambdaQuery().eq(Authentication::getCa, loginUser.getCode()));
+        if (!ObjectUtils.isEmpty(authentication) && authentications.size() >0) {
+            return Result.fail("已经有了认证信息，如果被拒，请修改重新提交！");
+        }
+
         String pathStr = FilePathUtils.getFilePath();
 
         String originalFilename = file.getOriginalFilename();
-        int index=originalFilename.lastIndexOf('.')+1;//获取地址.的前面的数字，从0开始
-        String type=originalFilename.substring(index);//从地址.开始截取后缀
+        int index = originalFilename.lastIndexOf('.') + 1;//获取地址.的前面的数字，从0开始
+        String type = originalFilename.substring(index);//从地址.开始截取后缀
 
 //        jpg/jpeg/png/gif
-        if (!("jpg".equals(type)||"jpeg".equals(type)||"png".equals(type)||"gif".equals(type))) {
+        if (!("jpg".equals(type) || "jpeg".equals(type) || "png".equals(type) || "gif".equals(type))) {
             return Result.fail("文件格式不正确，支持jpg/jpeg/png/gif！");
         }
 
         long size = file.getSize();
-        if (size/1024/1024>10) {
+        if (size / 1024 / 1024 > 10) {
             return Result.fail("文件大小不能超过10M！");
         }
 
         //生成新文件名字
         String newFileName = System.currentTimeMillis() + "." + type;
         // 封装上传文件位置的全路径
-        File targetFile  = new File(pathStr,newFileName);
+        File targetFile = new File(pathStr, newFileName);
         //把本地文件上传到封装上传文件位置的全路径
         file.transferTo(targetFile.getAbsoluteFile());
 
-        Object userInfo = request.getSession().getAttribute("userInfo");
-        User loginUser;
-        if (userInfo instanceof User) {
-            loginUser = (User) userInfo;
 
-            authentication.setCa(loginUser.getCode())
-                    .setCt(LocalDateTime.now())
-                    .setCertification(newFileName)
-                    .setCertification(uploadPath + "/" + newFileName)
-                    .setApproveStatus(AuthenticationApproveStatusEnum.UN_APPROVE.getStatus());
+        authentication.setCa(loginUser.getCode())
+                .setCt(LocalDateTime.now())
+                .setCertification(newFileName)
+                .setCertification(uploadPath + "/" + newFileName)
+                .setApproveStatus(AuthenticationApproveStatusEnum.UN_APPROVE.getStatus());
 
-            boolean flag = authenticationService.save(authentication);
-            if (flag) {
-                return Result.success(authentication);
-            } else {
-                return Result.fail("添加失败！");
-            }
+        boolean flag = authenticationService.save(authentication);
+        if (flag) {
+            return Result.success(authentication);
+        } else {
+            return Result.fail("添加失败！");
         }
-        return Result.fail("用户未登录！");
+
+
     }
 
     /**
      * 系统管理员查看认证列表
+     *
      * @param authentication
      * @param request
      * @return
@@ -140,6 +149,7 @@ public class AuthenticationController {
 
     /**
      * 当前登录人的个人认证详情
+     *
      * @param authentication
      * @param request
      * @return
@@ -158,7 +168,7 @@ public class AuthenticationController {
         Authentication one = authenticationService.getOne(Wrappers.<Authentication>lambdaQuery().eq(Authentication::getCa, loginUser.getCode()));
 
         if (ObjectUtils.isEmpty(one)) {
-             return Result.fail("没有查到您的认证信息");
+            return Result.fail("没有查到您的认证信息");
         } else {
             return Result.success(authentication);
         }
@@ -166,6 +176,7 @@ public class AuthenticationController {
 
     /**
      * 管理员： 根据id获取认证
+     *
      * @param id
      * @return
      */
@@ -193,6 +204,7 @@ public class AuthenticationController {
 
     /**
      * 管理员： 根据id批量删除认证
+     *
      * @return
      */
     @DeleteMapping("/{ids}")
