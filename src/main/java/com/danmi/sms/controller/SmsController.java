@@ -96,6 +96,9 @@ public class SmsController {
 //        当天发送给回复用户的手机号，当天超过3个企业发送的就取当天的，如果小于3个，就按时间倒序排序选择前三条数据，
 //        用户只回复一次，但是记录企业的个数条数。是否排除数据？
 
+        // @todo 实际使用要注释
+        replyService.save(new Reply().setReplyTime(DateUtils.timestampToLocalDateTime(reply.getTimestamp())).setPhone(reply.getPhone()).setReplyContent(reply.getContent()));
+
         String todayDate = DateUtils.localDateToString(LocalDate.now());
         // 查询当天发送详情中给此手机号发送的企业
         String phone = reply.getPhone();
