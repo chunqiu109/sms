@@ -72,13 +72,27 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
     }
 
     @Override
-    public Result phoneImport(MultipartFile file, SmsRequest request, User user) throws IOException {
+    public Result phoneImport(SmsRequest request, User user) throws IOException {
+
+//        if (!((!ObjectUtils.isEmpty(file) && !file.isEmpty()) || (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty())))
+        List<String> phones = Lists.newArrayList();
+
+        if (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty()){
+            phones = request.getPhones();
+        }
+
+        return handlePhone(phones, user);
+    }
+
+
+    @Override
+    public Result phoneImportByFile(MultipartFile file, User user) throws IOException {
 
 //        if (!((!ObjectUtils.isEmpty(file) && !file.isEmpty()) || (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty())))
         List<String> phones = Lists.newArrayList();
 
         // 以文件格式传入手机号
-        if (!ObjectUtils.isEmpty(file) && !file.isEmpty()) {
+
             String originalFilename = file.getOriginalFilename();
             int index = originalFilename.lastIndexOf('.') + 1;//获取地址.的前面的数字，从0开始
             String type = originalFilename.substring(index);//从地址.开始截取后缀
@@ -92,11 +106,12 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
             } else if ("txt".equals(type)) {
                 phones = parseTxt(file);
             }
-        // 手动输入手机号
-        } else if (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty()){
-            phones = request.getPhones();
-        }
 
+        return handlePhone(phones, user);
+
+    }
+
+    private Result handlePhone(List<String> phones, User user) {
         // 生成批次号
         String batch = String.valueOf(System.currentTimeMillis());
 
@@ -136,8 +151,8 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
         } else {
             return Result.fail("导入失败！");
         }
-
     }
+
 
     private List<String> parseExcel(MultipartFile file) throws IOException {
         List<String> phones = Lists.newArrayList();

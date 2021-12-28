@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 短信服务
@@ -71,7 +70,7 @@ public class SmsController {
             return Result.fail("您尚未登录！");
         }
 
-        if (ObjectUtils.isEmpty(request.getType()) || StringUtils.isEmpty(request.getContent())| StringUtils.isEmpty(request.getBatchNO())) {
+        if (ObjectUtils.isEmpty(request.getType()) || StringUtils.isEmpty(request.getContent()) | StringUtils.isEmpty(request.getBatchNO())) {
             return Result.fail("类型或者内容不能为空！");
         }
 
@@ -88,6 +87,7 @@ public class SmsController {
 
     /**
      * 接收用户回复
+     *
      * @return
      */
     @PostMapping("/reply")
@@ -108,7 +108,7 @@ public class SmsController {
                 .filter(i -> DateUtils.localDateTimeToString(i.getCt()).substring(0, 10).equals(todayDate))
                 .collect(Collectors.toList());
 
-        List<SendDetails> result =  Lists.newArrayList();
+        List<SendDetails> result = Lists.newArrayList();
         List<Reply> replies = Lists.newArrayList();
 
         // 大于等于3就取当天的企业并保存
@@ -134,6 +134,7 @@ public class SmsController {
 
     /**
      * 接收短信回执
+     *
      * @return
      */
     @PostMapping("/status")
@@ -164,19 +165,42 @@ public class SmsController {
     }
 
     /**
-     * 批量导入手机号
+     * 批量导入手机号-文件
+     *
      * @return
      */
-    @PostMapping("/phone-import")
-    public Result phoneImport(@RequestParam("file") MultipartFile file, SmsRequest request) throws Exception {
-        if (!((!ObjectUtils.isEmpty(file) && !file.isEmpty()) || (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty()))) {
-            return Result.fail("请先上传文件或者手动输入手机号！");
-        }
+    @PostMapping("/phone-import-file")
+    public Result phoneImportByFile(@RequestParam("file") MultipartFile file) throws Exception {
         User user = userUtils.getUser();
         if (ObjectUtils.isEmpty(user)) {
             return Result.fail("请先登录！");
         }
-        Result result = sendDetailsService.phoneImport(file, request, user);
+
+        if (ObjectUtils.isEmpty(file) && file.isEmpty()) {
+            return Result.fail("请先上传文件！");
+        }
+        Result result = sendDetailsService.phoneImportByFile(file, user);
+
+        return result;
+
+    }
+
+    /**
+     * 批量导入手机号-手动
+     *
+     * @return
+     */
+    @PostMapping("/phone-import")
+    public Result phoneImport(@RequestBody SmsRequest request) throws Exception {
+        User user = userUtils.getUser();
+        if (ObjectUtils.isEmpty(user)) {
+            return Result.fail("请先登录！");
+        }
+
+        if (ObjectUtils.isEmpty(request.getPhones()) || request.getPhones().isEmpty()) {
+            return Result.fail("请先输入手机号！");
+        }
+        Result result = sendDetailsService.phoneImport(request, user);
 
         return result;
 

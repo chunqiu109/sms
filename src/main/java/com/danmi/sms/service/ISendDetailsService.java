@@ -26,5 +26,7 @@ public interface ISendDetailsService extends IService<SendDetails> {
 
     List<SendDetailsVO> replyRecord(SendDetailRequest request);
 
-    Result phoneImport(MultipartFile file, SmsRequest request, User user) throws IOException;
+    Result phoneImport(SmsRequest request, User user) throws IOException;
+
+    Result phoneImportByFile(MultipartFile file, User user) throws IOException;
 }
