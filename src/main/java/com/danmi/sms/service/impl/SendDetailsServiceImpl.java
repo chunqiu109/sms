@@ -74,10 +74,9 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
     @Override
     public Result phoneImport(SmsRequest request, User user) throws IOException {
 
-//        if (!((!ObjectUtils.isEmpty(file) && !file.isEmpty()) || (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty())))
         List<String> phones = Lists.newArrayList();
 
-        if (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty()){
+        if (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty()) {
             phones = request.getPhones();
         }
 
@@ -88,24 +87,23 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
     @Override
     public Result phoneImportByFile(MultipartFile file, User user) throws IOException {
 
-//        if (!((!ObjectUtils.isEmpty(file) && !file.isEmpty()) || (!ObjectUtils.isEmpty(request.getPhones()) && !request.getPhones().isEmpty())))
         List<String> phones = Lists.newArrayList();
 
         // 以文件格式传入手机号
 
-            String originalFilename = file.getOriginalFilename();
-            int index = originalFilename.lastIndexOf('.') + 1;//获取地址.的前面的数字，从0开始
-            String type = originalFilename.substring(index);//从地址.开始截取后缀
+        String originalFilename = file.getOriginalFilename();
+        int index = originalFilename.lastIndexOf('.') + 1;//获取地址.的前面的数字，从0开始
+        String type = originalFilename.substring(index);//从地址.开始截取后缀
 
-            if (!("txt".equals(type) || "xlsx".equals(type))) {
-                return Result.fail("文件格式错误!");
-            }
+        if (!("txt".equals(type) || "xlsx".equals(type))) {
+            return Result.fail("文件格式错误!");
+        }
 
-            if ("xlsx".equals(type)) {
-                phones = parseExcel(file);
-            } else if ("txt".equals(type)) {
-                phones = parseTxt(file);
-            }
+        if ("xlsx".equals(type)) {
+            phones = parseExcel(file);
+        } else if ("txt".equals(type)) {
+            phones = parseTxt(file);
+        }
 
         return handlePhone(phones, user);
 
@@ -130,7 +128,6 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
                 .setFormatErrNum((int) formatErrNum)
                 .setSuccessNum((int) successNum)
                 .setBatch(batch);
-
 
 
         List<String> successList = phones.stream().filter(i -> PhoneUtil.checkPhone(i)).distinct().collect(Collectors.toList());
@@ -170,7 +167,9 @@ public class SendDetailsServiceImpl extends ServiceImpl<SendDetailsMapper, SendD
                 //拿到这一个格子与它的数据
                 Cell cell = row.getCell(j);
                 cell.setCellType(CellType.STRING);
-                phones.add(cell.getStringCellValue());
+                if (!ObjectUtils.isEmpty(cell)) {
+                    phones.add(cell.getStringCellValue());
+                }
             }
         }
         return phones;
