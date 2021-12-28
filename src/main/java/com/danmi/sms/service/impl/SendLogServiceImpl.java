@@ -26,6 +26,7 @@ import com.danmi.sms.vo.SendLogFailVO;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -241,11 +242,12 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
                 .map(i -> i.getBatch())
                 .collect(Collectors.toList());
 
-        List<String> sendedPhones = sendDetailsService.list(Wrappers.<SendDetails>lambdaQuery().in(SendDetails::getBatch, batchs))
-                .stream().map(i -> i.getPhone()).distinct().collect(Collectors.toList());
 
-
-
+        List<String> sendedPhones = Lists.newArrayList();
+        if (!ObjectUtils.isEmpty(batchs) || batchs.size() != 0) {
+            sendedPhones = sendDetailsService.list(Wrappers.<SendDetails>lambdaQuery().in(SendDetails::getBatch, batchs))
+                    .stream().map(i -> i.getPhone()).distinct().collect(Collectors.toList());
+        }
 
         // 保存已经发送的手机号和将要发送的手机号相同的数据集合对象
         List<String> removeList = Lists.newArrayList();
@@ -256,10 +258,6 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
                 phones.remove(i);
             }
         });
-
-
-
-
 
         ResponseEntity<SmsResponse> send = SMSUtils.send(phones, content);
         if (send.getStatusCodeValue() != 200) {
