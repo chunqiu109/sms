@@ -232,7 +232,7 @@ public class DateUtils {
     }
 
     public static long stringToTimestamp(String localDate) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DEFAULT);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DS_LINE);
         LocalDateTime parse = LocalDateTime.parse(localDate);
         return parse.toInstant(ZoneOffset.of("+8")).toEpochMilli();
 

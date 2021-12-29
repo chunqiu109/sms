@@ -205,6 +205,13 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
         return Result.fail("设置失败！");
     }
 
+    public static void main(String[] args) {
+        String a = "2021-12-28";
+        System.out.println(a.substring(0,10));
+//        a = a.substring(0,a.length());
+        System.out.println(DateUtils.getStringToDate(a, DateUtils.DATE_FORMAT_DS_LINE).getTime());
+        DateUtils.localDateTimeToTimestamp(LocalDateTime.now());
+    }
 
     public Result sendAndProcessService(String sendTime, SmsRequest request, User loginUser, List<String> phones, Map<String, Integer> maps, Integer logId) {
         String content = request.getContent();
@@ -238,7 +245,7 @@ public class SendLogServiceImpl extends ServiceImpl<SendLogMapper, SendLog> impl
         // 查找同一天相同模板的所有已经发送的手机号
         List<String> batchs = list(Wrappers.<SendLog>lambdaQuery().eq(SendLog::getContent, content)).stream()
                 .filter(i -> i.getSendTime().substring(0, 10).equals(todayDate))
-                .filter(i -> DateUtils.stringToTimestamp(i.getSendTime()) <= DateUtils.localDateTimeToTimestamp(LocalDateTime.now()))
+                .filter(i -> DateUtils.getStringToDate(i.getSendTime(), DateUtils.DATE_FORMAT_DS_LINE).getTime() <= DateUtils.localDateTimeToTimestamp(LocalDateTime.now()))
                 .map(i -> i.getBatch())
                 .collect(Collectors.toList());
 
